@@ -1,0 +1,9 @@
+
+/**
+ * enumeration of forms of education constants
+ */
+public enum FormOfEducation {
+    DISTANCE_EDUCATION,
+    FULL_TIME_EDUCATION,
+    EVENING_CLASSES;
+}

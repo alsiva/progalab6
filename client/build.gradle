@@ -11,13 +11,8 @@ plugins {
     id 'application'
 }
 
-repositories {
-    // Use JCenter for resolving dependencies.
-    jcenter()
-}
-
 dependencies {
-
+    implementation project(':common')
 }
 
 application {
