@@ -1,43 +1,79 @@
-import java.io.IOException;
+import commands.Command;
+import domain.PrintRepresentation;
+import domain.StudyGroup;
+import response.ShowResponse;
+
+import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Set;
 
 public class Client {
     /* Порт сервера, к которому собирается
   подключиться клиентский сокет */
     public final static int SERVICE_PORT = 50001;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+
+        CommandReader commandReader = new CommandReader(new BufferedReader(new InputStreamReader(System.in)));
+        PrintRepresentation printRepresentation = new PrintRepresentation();
+
         /* Создайте экземпляр клиентского сокета. Нет необходимости в привязке к определенному порту */
         try (DatagramSocket clientSocket = new DatagramSocket()) {
 
             // Получите IP-адрес сервера
             InetAddress IPAddress = InetAddress.getByName("localhost");
 
-            // Создайте соответствующие буферы
-            byte[] sendingDataBuffer = new byte[1024];
-            byte[] receivingDataBuffer = new byte[1024];
+            while (true) {
+                Command command = commandReader.readCommand();
 
-            /* Преобразуйте данные в байты и разместите в буферах */
-            String sentence = "Hello from UDP client";
-            sendingDataBuffer = sentence.getBytes();
+                if (command == null) {
+                    break;
+                }
 
-            // Создайте UDP-пакет
-            DatagramPacket sendingPacket = new DatagramPacket(sendingDataBuffer, sendingDataBuffer.length, IPAddress, SERVICE_PORT);
+                //Сериализация команды
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try (ObjectOutput objectOutput = new ObjectOutputStream(byteArrayOutputStream)) {
+                    objectOutput.writeObject(command);
+                }
 
-            // Отправьте UDP-пакет серверу
-            clientSocket.send(sendingPacket);
+                byte[] serializedCommand = byteArrayOutputStream.toByteArray();
 
-            // Получите ответ от сервера, т.е. предложение из заглавных букв
-            DatagramPacket receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-            clientSocket.receive(receivingPacket);
+                // Создайте UDP-пакет
+                DatagramPacket sendingPacket = new DatagramPacket(serializedCommand, serializedCommand.length, IPAddress, SERVICE_PORT);
 
-            // Выведите на экране полученные данные
-            String receivedData = new String(receivingPacket.getData());
-            System.out.println("Sent from the server: " + receivedData);
-        } catch(SocketException e) {
+                // Отправьте UDP-пакет серверу
+                clientSocket.send(sendingPacket);
+
+                byte[] receivingDataBuffer = new byte[1024 * 1024];
+
+                // Получите ответ от сервера
+                DatagramPacket receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+                clientSocket.receive(receivingPacket);
+
+                Object response = null;//todo это сделать нормально
+                try (ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(receivingPacket.getData()))) {
+                    response = responseInBytes.readObject();
+                } catch (ClassNotFoundException e) {//todo мне кажется что здесь не очень, но пока не уверен что
+                    e.printStackTrace();
+                }
+                //дохущиа elseif для получения нужной строки от response
+                if (response instanceof ShowResponse) {
+                    Set<StudyGroup> groups = ((ShowResponse) response).getGroups();
+                    for (StudyGroup studyGroup: groups) {
+                        printRepresentation.toPrint(studyGroup);
+                    }
+                }
+
+                // Выведите на экране полученные данные
+
+                System.out.println("Sent from the server: ");
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -1,3 +1,4 @@
+package domain;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -10,7 +11,7 @@ public class PrintRepresentation {
     private final SimpleDateFormat CREATION_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private final DateTimeFormatter BIRTHDAY_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    String toPrint(StudyGroup studyGroup) {
+    public String toPrint(StudyGroup studyGroup) {
         Person groupAdmin = studyGroup.getGroupAdmin();
 
         return "{" +
@@ -25,15 +26,15 @@ public class PrintRepresentation {
         '}';
     }
 
-    String toPrint(Coordinates coordinates) {
+    public String toPrint(Coordinates coordinates) {
         return "(x=" + coordinates.getX() + ", y=" + coordinates.getY() + ")";
     }
 
-    String toPrint(Date date) {
+    public String toPrint(Date date) {
         return CREATION_DATE_FORMAT.format(date);
     }
 
-    String toPrint(Person person) {
+    public String toPrint(Person person) {
         Location location = person.getLocation();
         String passportID = person.getPassportID();
 
@@ -45,7 +46,7 @@ public class PrintRepresentation {
         "}";
     }
 
-    String toPrint(Location location) {
+    public String toPrint(Location location) {
         return "{" +
             "x=" + location.getX() +
             ", y=" + location.getY() +

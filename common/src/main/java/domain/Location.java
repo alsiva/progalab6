@@ -1,8 +1,11 @@
+package domain;
+
+import java.io.Serializable;
 
 /**
  * class that defines location
  */
-public class Location {
+public class Location implements Serializable {
     public Location(int x, int y, String locationName) {
         this.x = x;
         this.y = y;

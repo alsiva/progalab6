@@ -1,8 +1,11 @@
+package domain;
+
+import java.io.Serializable;
 
 /**
  * class that contains x,y coordinates
  */
-public class Coordinates {
+public class Coordinates implements Serializable {
     public Coordinates(float x, int y) {
         this.x = x;
         this.y = y;

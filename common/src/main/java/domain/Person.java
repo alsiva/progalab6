@@ -1,4 +1,6 @@
+package domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -7,7 +9,7 @@ import java.util.Objects;
 /**
  * class that defines person
  */
-public class Person {
+public class Person implements Serializable {
     public Person(String name, LocalDate birthday, String passportID, Location location){
         this.adminName = name;
         this.birthday = birthday;

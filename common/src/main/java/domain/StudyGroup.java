@@ -1,21 +1,23 @@
+package domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Class that defines study group
  */
-public class StudyGroup implements Comparable<StudyGroup> {
-    private final Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+public class StudyGroup implements Comparable<StudyGroup>, Serializable {
+    private final long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private final String name; //Поле не может быть null, Строка не может быть пустой
     private final Coordinates coordinates; //Поле не может быть null
     private final java.util.Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    private final Integer studentsCount; //Значение поля должно быть больше 0, Поле не может быть null
+    private final int studentsCount; //Значение поля должно быть больше 0, Поле не может быть null
     private final FormOfEducation formOfEducation; //Поле не может быть null
     private final Semester semesterEnum; //Поле не может быть null
     private final Person groupAdmin; //Поле может быть null
 
     public StudyGroup(
-            Long id,
+            long id,
             String name,
             Coordinates coordinates,
             Date creationDate,
@@ -89,7 +91,7 @@ public class StudyGroup implements Comparable<StudyGroup> {
     }
 
     public int compareTo(StudyGroup other) {
-        return studentsCount.compareTo(other.studentsCount);
+        return Integer.compare(studentsCount, other.studentsCount);
     }
 
     public static long readId(String fieldAsString) throws FailedToParseException {
