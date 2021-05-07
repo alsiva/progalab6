@@ -1,4 +1,6 @@
 package commands;
 
-public class HelpCommand {
+import java.io.Serializable;
+
+public class HelpCommand implements Serializable, Command {
 }

@@ -1,4 +1,6 @@
 package commands;
 
-public class SaveCommand {
+import java.io.Serializable;
+
+public class SaveCommand implements Serializable, Command {
 }

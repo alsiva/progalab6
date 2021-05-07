@@ -1,6 +1,8 @@
 package commands;
 
-public class RemoveAllByStudentsCountCommand {
+import java.io.Serializable;
+
+public class RemoveAllByStudentsCountCommand implements Serializable, Command {
     private final Long count;
 
     public RemoveAllByStudentsCountCommand(Long count) {

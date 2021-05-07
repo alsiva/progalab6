@@ -2,7 +2,9 @@ package commands;
 
 import domain.Person;
 
-public class CountByGroupAdminCommand {
+import java.io.Serializable;
+
+public class CountByGroupAdminCommand implements Serializable, Command {
     private Person groupAdmin;
 
     public CountByGroupAdminCommand(Person groupAdmin) {

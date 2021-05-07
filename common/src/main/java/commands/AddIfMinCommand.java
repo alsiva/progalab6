@@ -2,7 +2,9 @@ package commands;
 
 import domain.StudyGroup;
 
-public class AddIfMinCommand {
+import java.io.Serializable;
+
+public class AddIfMinCommand implements Serializable, Command {
     private final StudyGroup studyGroup;
 
     public AddIfMinCommand(StudyGroup studyGroup) {

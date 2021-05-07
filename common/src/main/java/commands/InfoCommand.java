@@ -1,4 +1,6 @@
 package commands;
 
-public class InfoCommand {
+import java.io.Serializable;
+
+public class InfoCommand implements Command, Serializable {
 }

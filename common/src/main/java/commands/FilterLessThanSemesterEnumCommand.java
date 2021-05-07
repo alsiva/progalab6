@@ -2,7 +2,9 @@ package commands;
 
 import domain.Semester;
 
-public class FilterLessThanSemesterEnumCommand {
+import java.io.Serializable;
+
+public class FilterLessThanSemesterEnumCommand implements Command, Serializable {
     private final Semester semesterEnum;
 
     public FilterLessThanSemesterEnumCommand(Semester semesterEnum) {

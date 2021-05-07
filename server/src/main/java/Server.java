@@ -1,5 +1,4 @@
 import commands.*;
-import domain.Person;
 import domain.StudyGroup;
 import response.*;
 
@@ -15,11 +14,13 @@ public class Server {
     public final static int SERVICE_PORT = 50001;
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         if (args.length == 0) {
             System.err.println("Please specify input file name as program argument");
             return;
         }
+
+        // todo: обрабатывать команду save
 
         String filename = args[0];
         Administration administration = new Administration(filename);
@@ -27,8 +28,10 @@ public class Server {
         // Создайте новый экземпляр DatagramSocket, чтобы получать ответы от клиента
         try (DatagramSocket serverSocket = new DatagramSocket(SERVICE_PORT)) {
 
-            /* Создайте буферы для хранения отправляемых и получаемых данных.
-Они временно хранят данные в случае задержек связи */
+            /*
+            Создайте буферы для хранения отправляемых и получаемых данных.
+            Они временно хранят данные в случае задержек связи
+            */
             byte[] receivingDataBuffer = new byte[1024];
 
             /* Создайте экземпляр UDP-пакета для хранения клиентских данных с использованием буфера для полученных данных */
@@ -71,22 +74,16 @@ public class Server {
                     StudyGroup studyGroup = administration.removeById(((RemoveByIdCommand) command).getId());
                     response = new RemoveByIdResponse(studyGroup);
                 } else if(command instanceof ClearCommand) {
+                    administration.clear();
                     response = new ClearResponse();
-                } else if(command instanceof SaveCommand) {
-                    Set<StudyGroup> groups = administration.save();
-                    response = new SaveResponse(groups);
                 } else if(command instanceof ExecuteScriptCommand) {
                     //todo command response for script execution
-                } else if(command instanceof ExitCommand) {
-                    //todo command response for exit
                 } else if(command instanceof AddIfMinCommand) {
                     StudyGroup studyGroup = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
                     response = new AddIfMinResponse(studyGroup);
                 } else if(command instanceof RemoveLowerCommand) {
                     Set<StudyGroup> removedGroups = administration.removeLower(((RemoveLowerCommand) command).getStudyGroup());
                     response = new RemoveLowerResponse(removedGroups);
-                } else if(command instanceof HistoryCommand) {
-                    //todo command response for history
                 } else if(command instanceof RemoveAllByStudentsCountCommand) {
                     Set<StudyGroup> removedGroups = administration.removeAllByStudentsCount(((RemoveAllByStudentsCountCommand) command).getCount());
                     response = new RemoveAllByStudentsCountResponse(removedGroups);
@@ -124,10 +121,6 @@ public class Server {
                 // Отправьте пакет клиенту
                 serverSocket.send(outputPacket);
             }
-
-
-        } catch (SocketException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 }

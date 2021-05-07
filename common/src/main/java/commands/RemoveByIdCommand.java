@@ -1,6 +1,8 @@
 package commands;
 
-public class RemoveByIdCommand {
+import java.io.Serializable;
+
+public class RemoveByIdCommand implements Serializable, Command {
     private final Long id;
 
     public RemoveByIdCommand(Long id) {

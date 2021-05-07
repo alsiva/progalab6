@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Group administration; responsible for all operations with study groups
@@ -97,7 +98,7 @@ public class Administration {
     public StudyGroup removeById(Long id) {
         for (StudyGroup studyGroup: groups) {
             if (studyGroup.getId().equals(id)) {
-                groups.remove(studyGroup);
+                groups.remove(studyGroup); // todo: concurrentModificationException
                 return studyGroup;
             }
         }
@@ -116,14 +117,11 @@ public class Administration {
      * @param other study group
      */
     public StudyGroup addIfMin(StudyGroup other) {//добавить группу, если в ней меньше студентов, чем в других группах
-        StudyGroup min = null;
-        for (StudyGroup studyGroup: groups) {
-            if (min == null || studyGroup.getStudentsCount() < min.getStudentsCount()) {
-                min = studyGroup;
-            }
-        }
+        OptionalInt min = groups.stream()
+                .mapToInt(StudyGroup::getStudentsCount)
+                .min();
 
-        if (min == null || other.getStudentsCount() < min.getStudentsCount()) {
+        if (!min.isPresent() || other.getStudentsCount() < min.getAsInt()) {
             groups.add(other);
             return other;
         }
@@ -136,10 +134,11 @@ public class Administration {
      * @param other study group
      * @return true if element was removed
      */
-    public Set<StudyGroup> removeLower(StudyGroup other) {//удаляет из коллекции все элементы, в которых кол-во студентов меньше чем в other
+    public Set<StudyGroup> removeLower(StudyGroup other) { //удаляет из коллекции все элементы, в которых кол-во студентов меньше чем в other
         Set<StudyGroup> removedGroups = new LinkedHashSet<>();
         for (StudyGroup studyGroup: groups) {
             if (studyGroup.getStudentsCount() == other.getStudentsCount()) {
+                // todo: concurrentModificationException
                 groups.remove(studyGroup);
                 removedGroups.add(studyGroup);
             }
@@ -152,14 +151,13 @@ public class Administration {
      * @param count
      */
     public Set<StudyGroup> removeAllByStudentsCount(long count) {
-        Set<StudyGroup> removedGroups = new LinkedHashSet<>();
-        for (StudyGroup studyGroup: groups) {
-            if (studyGroup.getStudentsCount() == count) {
-                groups.remove(studyGroup);
-                removedGroups.add(studyGroup);
-            }
-        }
-        return removedGroups;
+        Set<StudyGroup> groupsToRemove = groups.stream()
+                .filter(studyGroup -> studyGroup.getStudentsCount() == count)
+                .collect(Collectors.toSet());
+
+        groups.removeAll(groupsToRemove);
+
+        return groupsToRemove;
     }
 
     /**

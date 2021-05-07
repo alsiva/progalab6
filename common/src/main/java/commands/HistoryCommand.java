@@ -1,4 +1,6 @@
 package commands;
 
-public class HistoryCommand {
+import java.io.Serializable;
+
+public class HistoryCommand implements Serializable, Command {
 }

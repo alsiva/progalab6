@@ -13,4 +13,5 @@ public class HelpResponse implements Serializable, Response {
     public String getResponse() {
         return response;
     }
+
 }

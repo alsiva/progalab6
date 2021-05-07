@@ -1,6 +1,5 @@
 
-import commands.Command;
-import commands.ShowCommand;
+import commands.*;
 import domain.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -49,51 +48,24 @@ public class CommandReader {
      * method that reads string commands from user or script
      */
     public Command readCommand() throws IOException {
-        System.out.println("Please enter command:");
-        String command = in.readLine();
-        if (command == null) {
-            return null;
-        }
+        while (true) {
+            System.out.println("Please enter command:");
+            String command = in.readLine();
+            if (command == null) {
+                return null;
+            }
 
-        if (command.equals(HELP)) {
-            System.out.println(HELP_CONTENTS);
-
-        } else if (command.equals(INFO)) {
-            throw new NotImplementedException(); // fixme
-//                administration.info();
-
-        } else if (command.equals(SHOW)) {
-            return new ShowCommand();
-
-        } else if (command.equals(ADD)) {
-            throw new NotImplementedException(); // fixme
-            //administration.add(readStudyGroup());
-
-        } else if (command.startsWith(UPDATE)) {
-            throw new NotImplementedException(); // fixme
-                /*
-                String idAsStr = command.substring(UPDATE.length()).trim();
-                long id;
-                try {
-                    id = Long.parseLong(idAsStr);
-                } catch (NumberFormatException e) {
-                    System.err.println("Illegal argument for update: " + idAsStr + " is not a long");
-                    continue;
-                }
-
-                boolean hasElement = administration.hasElementWithId(id);
-                if (!hasElement) {
-                    System.err.println("No element with id: " + id);
-                    continue;
-                }
-
-                administration.updateId(readStudyGroup(id));
-
-                 */
-
-        } else if (command.startsWith(REMOVE_BY_ID)) {
-            throw new NotImplementedException(); // fixme
-                /*
+            if (command.equals(HELP)) {
+                return new HelpCommand();
+            } else if (command.equals(INFO)) {
+                return new InfoCommand();
+            } else if (command.equals(SHOW)) {
+                return new ShowCommand();
+            } else if (command.equals(ADD)) {
+                return new AddCommand(readStudyGroup());
+            } else if (command.startsWith(UPDATE)) {
+                return new UpdateIdCommand(readStudyGroup());
+            } else if (command.startsWith(REMOVE_BY_ID)) {
                 String idAsStr = command.substring(REMOVE_BY_ID.length()).trim();
                 long id;
                 try {
@@ -102,19 +74,13 @@ public class CommandReader {
                     System.err.println("Illegal argument for remove_by_id: " + idAsStr + " is not a long");
                     continue;
                 }
-                administration.removeById(id);
-
-                 */
-        } else if (command.equals(CLEAR)) {
-            throw new NotImplementedException(); // fixme
-            //administration.clear();
-
-        } else if (command.equals(SAVE)) {
-            throw new NotImplementedException(); // fixme
-            //administration.save();
-
-        } else if (command.startsWith(EXECUTE_SCRIPT)) {
-            throw new NotImplementedException(); // fixme
+                return new RemoveByIdCommand(id);
+            } else if (command.equals(CLEAR)) {
+                return new ClearCommand();
+            } else if (command.equals(SAVE)) {
+                return new SaveCommand();
+            } else if (command.startsWith(EXECUTE_SCRIPT)) {
+                throw new NotImplementedException(); // fixme
                 /*
                 if (command.equals(EXECUTE_SCRIPT)) {
                     System.err.println("filename is missing");
@@ -143,24 +109,13 @@ public class CommandReader {
 
                  */
 
-        } else if (command.equals(ADD_IF_MIN)) {
-            throw new NotImplementedException(); // fixme
-            //administration.addIfMin(readStudyGroup());
-
-        } else if (command.equals(REMOVE_LOWER)) {
-            throw new NotImplementedException(); // fixme
-            //return new RemoveLowerCommand(readStudyGroup());
-
-        } else if (command.equals(HISTORY)) {
-            throw new NotImplementedException(); // fixme
-                /*
-                for (String lastCommand : lastCommands) {
-                    System.out.println(lastCommand);
-                }
-                 */
-        } else if (command.startsWith(REMOVE_ALL_BY_STUDENTS_COUNT)) {
-            throw new NotImplementedException(); // fixme
-                /*
+            } else if (command.equals(ADD_IF_MIN)) {
+                return new AddIfMinCommand(readStudyGroup());
+            } else if (command.equals(REMOVE_LOWER)) {
+                return new RemoveLowerCommand(readStudyGroup());
+            } else if (command.equals(HISTORY)) {
+                return new HistoryCommand();
+            } else if (command.startsWith(REMOVE_ALL_BY_STUDENTS_COUNT)) {
                 String countAsStr = command.substring(REMOVE_ALL_BY_STUDENTS_COUNT.length()).trim();
                 long count;
                 try {
@@ -169,78 +124,54 @@ public class CommandReader {
                     System.err.println("Illegal argument for remove_all_by_students_count: " + countAsStr + " is not long");
                     continue;
                 }
-                administration.removeAllByStudentsCount(count);
-
-                 */
-
-        } else if (command.equals(COUNT_BY_GROUP_ADMIN)) {
-            throw new NotImplementedException(); // fixme
-                /*
+                return new RemoveAllByStudentsCountCommand(count);
+            } else if (command.equals(COUNT_BY_GROUP_ADMIN)) {
                 Person groupAdmin = readGroupAdmin();
                 if (groupAdmin == null) {
                     System.err.println("Illegal argument for " + COUNT_BY_GROUP_ADMIN + ": admin should not be null");
                     continue;
                 }
-                int count = administration.countByGroupAdmin(groupAdmin);
-                System.out.println("total elements with given group admin: " + count);
-
-                 */
-
-        } else if (command.startsWith(FILTER_LESS_THAN_SEMESTER_ENUM)) {
-            throw new NotImplementedException(); // fixme
-                /*
+                return new CountByGroupAdminCommand(groupAdmin);
+            } else if (command.startsWith(FILTER_LESS_THAN_SEMESTER_ENUM)) {
                 String semesterAsString = command.substring(FILTER_LESS_THAN_SEMESTER_ENUM.length()).trim();
-
                 Semester semester;
                 try {
                     semester = Semester.valueOf(semesterAsString);
                 } catch (IllegalArgumentException e) {
                     System.err.println("Illegal argument for filter_less_than_semester_enum: failed to parse semester");
-                    continue;
+                    return null;
                 }
-                administration.filterLessThanSemesterEnum(semester);
 
-                 */
+                return new FilterLessThanSemesterEnumCommand(semester);
 
-        } else if (command.equals(EXIT)) {
-            scriptStack.pop();
+            } else if (command.equals(EXIT)) {
+                return new ExitCommand();
+            }
+
+            lastCommands.add(command);
+            if (lastCommands.size() > 10) {
+                lastCommands.remove();
+            }
+
+            System.err.println("command " + command + " not recognized");
             return null;
-
         }
 
-        lastCommands.add(command);
-        if (lastCommands.size() > 10) {
-            lastCommands.remove();
-        }
-
-        System.err.println("command " + command + " not recognized");
-        return null;
     }
 
     private static final Random rng = new Random();
-/*
 
-    */
+
+
 /**
      * @return study group with random id
      * @throws IOException if readUntilSuccess fails to read from standard input
-     *//*
+     */
 
     private StudyGroup readStudyGroup() throws IOException {
-        Set<Long> existingIds = new HashSet<>();
-
-        for (StudyGroup studyGroup: administration.getGroups()) {
-            existingIds.add(studyGroup.getId());
-        }
-
-        long id;
-        do {
-            id = rng.nextLong();
-        } while (existingIds.contains(id));
-
-        return readStudyGroup(id);
+        return readStudyGroup(rng.nextLong());
     }
-*/
+
 
     /**
      * @param id auto-generated id
