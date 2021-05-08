@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Set;
 
 public class Server {
@@ -72,7 +73,7 @@ public class Server {
             return response;
         }
 
-        public void sendResponse(Response response) throws IOException {
+        public void sendResponse(Response response, DatagramPacket inputPacket, DatagramSocket serverSocket) throws IOException {
             // сериализцаия Response
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             try (ObjectOutput objectOutput = new ObjectOutputStream(byteArrayOutputStream)) {
@@ -100,33 +101,37 @@ public class Server {
 
     static class ConnectionManager {
 
-        private DatagramSocket ServerSocket;
-        private DatagramPacket inputPacket;
+        public DatagramSocket setServerSocket() {
+            try {
+                return new DatagramSocket(SERVICE_PORT);
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
-        public Command getConnectionAndCommand() throws IOException, ClassNotFoundException {
+        public DatagramPacket getInputPacket(DatagramSocket serverSocket) throws IOException{
 
-            try (DatagramSocket serverSocket = new DatagramSocket(SERVICE_PORT)) {
-
-            /*
-            Создайте буферы для хранения отправляемых и получаемых данных.
-            Они временно хранят данные в случае задержек связи
-            */
                 byte[] receivingDataBuffer = new byte[1024];
 
-                /* Создайте экземпляр UDP-пакета для хранения клиентских данных с использованием буфера для полученных данных */
                 DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
                 System.out.println("Waiting for a client to connect...");
 
-
                 while (true) {
-                    // сохранение данных от клиента в inputPacket
                     serverSocket.receive(inputPacket);
-                    // десереализация команды из байт в объект
-                    Command command;
-                    try (ObjectInputStream commandInBytes = new ObjectInputStream(new ByteArrayInputStream(inputPacket.getData()))) {
-                        command = (Command) commandInBytes.readObject();
-                        return command;
-                    }
+                    return inputPacket;
+                }
+
+        }
+
+        public Command getCommand(DatagramPacket inputPacket) {
+            while (true) {
+                Command command;
+                try (ObjectInputStream commandInBytes = new ObjectInputStream(new ByteArrayInputStream(inputPacket.getData()))) {
+                    command = (Command) commandInBytes.readObject();
+                    return command;
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -145,14 +150,11 @@ public class Server {
         ResponseHandler responseHandler = new ResponseHandler(administration);
         ConnectionManager connectionManager = new ConnectionManager();
         Command command = null;
-
-
-        try {
-            command = connectionManager.getConnectionAndCommand();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        DatagramSocket serverSocket = connectionManager.setServerSocket();
+        while (true) {
+            DatagramPacket inputPacket = connectionManager.getInputPacket(serverSocket);
+            command = connectionManager.getCommand(inputPacket);
+            responseHandler.sendResponse(responseHandler.getResponse(command), inputPacket, serverSocket);
         }
-
-        responseHandler.sendResponse(responseHandler.getResponse(command));
     }
 }
