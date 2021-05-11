@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class Administration {
     private final Set<StudyGroup> groups;
     private final Instant creationDate = Instant.now();
-    private final PrintRepresentation printRepresentation = new PrintRepresentation();
+    private final PrintRepresentation printRepresentation = new PrintRepresentation(); // todo: move to client
     private final FileStorage fileStorage;
     private static final DateTimeFormatter BIRTHDAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -48,6 +48,8 @@ public class Administration {
     }
 
     public StudyGroup add(StudyGroup studyGroup) {
+
+        // todo: генерерировать id для studyGroup
         groups.add(studyGroup);
         return studyGroup;
     }
@@ -56,6 +58,7 @@ public class Administration {
      * returns information about collection
      */
     public String info() {
+        // todo: move this data to separate class and print in client
         System.out.println("Collection type: " + groups.getClass().toString());
         System.out.println("Collection creation time: " + printRepresentation.toPrint(creationDate));
         System.out.println("Elements in collection: " + groups.size());
@@ -80,29 +83,29 @@ public class Administration {
      * replaces old study group with other if they have the same id
      * @param other study group
      */
-    public StudyGroup updateId(StudyGroup other) {
-        boolean wasRemoved = groups.removeIf(studyGroup -> studyGroup.getId().equals(other.getId()));
-
-        if (wasRemoved) {
-            groups.add(other);
-            return other;
-        }
-
-        return null;
+    public Optional<StudyGroup> updateId(StudyGroup other) {
+        // fixme
+        return groups.stream()
+                .filter(studyGroup -> studyGroup.getId().equals(other.getId()))
+                .findFirst();
     }
 
     /**
      * removes study group in collection by it's id
      * @param id
+     * @return
      */
-    public StudyGroup removeById(Long id) {
-        for (StudyGroup studyGroup: groups) {
-            if (studyGroup.getId().equals(id)) {
-                groups.remove(studyGroup); // todo: concurrentModificationException
-                return studyGroup;
-            }
+    public Optional<StudyGroup> removeById(Long id) {
+        Optional<StudyGroup> removedGroup = groups.stream()
+                .filter(studyGroup -> studyGroup.getId().equals(id))
+                .findFirst();
+
+        if (removedGroup.isPresent()) {
+            groups.remove(removedGroup.get());
+            return removedGroup;
         }
-        return null;
+
+        return Optional.empty();
     }
 
     /**
@@ -116,17 +119,17 @@ public class Administration {
      * adds other study group if it has lower students count than old one
      * @param other study group
      */
-    public StudyGroup addIfMin(StudyGroup other) {//добавить группу, если в ней меньше студентов, чем в других группах
+    public Boolean addIfMin(StudyGroup other) {//добавить группу, если в ней меньше студентов, чем в других группах
         OptionalInt min = groups.stream()
                 .mapToInt(StudyGroup::getStudentsCount)
                 .min();
 
         if (!min.isPresent() || other.getStudentsCount() < min.getAsInt()) {
             groups.add(other);
-            return other;
+            return true;
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -135,14 +138,13 @@ public class Administration {
      * @return true if element was removed
      */
     public Set<StudyGroup> removeLower(StudyGroup other) { //удаляет из коллекции все элементы, в которых кол-во студентов меньше чем в other
-        Set<StudyGroup> removedGroups = new LinkedHashSet<>();
-        for (StudyGroup studyGroup: groups) {
-            if (studyGroup.getStudentsCount() == other.getStudentsCount()) {
-                // todo: concurrentModificationException
-                groups.remove(studyGroup);
-                removedGroups.add(studyGroup);
-            }
-        }
+        Set<StudyGroup> removedGroups = groups
+                .stream()
+                .filter(studyGroup -> studyGroup.getStudentsCount() < other.getStudentsCount())
+                .collect(Collectors.toSet());
+
+        groups.removeAll(removedGroups);
+
         return removedGroups;
     }
 
@@ -165,14 +167,8 @@ public class Administration {
      * @param groupAdmin
      * @return count
      */
-    public Integer countByGroupAdmin(Person groupAdmin) {
-        int count = 0;
-        for (StudyGroup studyGroup: groups) {
-            if (studyGroup.getGroupAdmin().equals(groupAdmin)) {
-                count++;
-            }
-        }
-        return count;
+    public long countByGroupAdmin(Person groupAdmin) {
+        return groups.stream().filter(studyGroup -> studyGroup.getGroupAdmin().equals(groupAdmin)).count();
     }
 
     /**
@@ -180,14 +176,9 @@ public class Administration {
      * @param semester
      */
     public Set<StudyGroup> filterLessThanSemesterEnum(Semester semester) {//группы у которых семестер инам меньше заданного
-        Set<StudyGroup> studyGroupsWithLessEnum = new LinkedHashSet<>();
-        for (StudyGroup studyGroup: groups) {
-            if (studyGroup.getSemesterEnum().ordinal() < semester.ordinal()) {
-                System.out.println(printRepresentation.toPrint(studyGroup));
-                studyGroupsWithLessEnum.add(studyGroup);
-            }
-        }
-        return studyGroupsWithLessEnum;
+        return groups.stream()
+                .filter(studyGroup -> studyGroup.getSemesterEnum().ordinal() < semester.ordinal())
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -196,12 +187,8 @@ public class Administration {
      * @return true or false
      */
     public boolean hasElementWithId(Long id) {
-        for (StudyGroup studyGroup: groups) {
-            if (studyGroup.getId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
+        Optional<StudyGroup> groupWithId = groups.stream().filter(studyGroup -> studyGroup.getId().equals(id)).findFirst();
+        return groupWithId.isPresent();
     }
 
     public Set<StudyGroup> save() {

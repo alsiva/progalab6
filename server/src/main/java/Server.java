@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Optional;
 import java.util.Set;
 
 public class Server {
@@ -42,19 +43,21 @@ public class Server {
                 StudyGroup group = administration.add(((AddCommand) command).getGroup());
                 response = new AddResponse(group);
             } else if(command instanceof UpdateIdCommand) {
-                StudyGroup group = administration.updateId(((UpdateIdCommand) command).getGroup());
+                Optional<StudyGroup> group = administration.updateId(((UpdateIdCommand) command).getGroup());
                 response = new UpdateIdResponse(group);
             } else if(command instanceof RemoveByIdCommand) {
-                StudyGroup studyGroup = administration.removeById(((RemoveByIdCommand) command).getId());
+                Optional<StudyGroup> studyGroup = administration.removeById(((RemoveByIdCommand) command).getId());
                 response = new RemoveByIdResponse(studyGroup);
+
+
             } else if(command instanceof ClearCommand) {
                 administration.clear();
                 response = new ClearResponse();
             } else if(command instanceof ExecuteScriptCommand) {
                 //todo command response for script execution
             } else if(command instanceof AddIfMinCommand) {
-                StudyGroup studyGroup = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
-                response = new AddIfMinResponse(studyGroup);
+                Boolean wasAdded = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
+                response = new AddIfMinResponse(wasAdded);
             } else if(command instanceof RemoveLowerCommand) {
                 Set<StudyGroup> removedGroups = administration.removeLower(((RemoveLowerCommand) command).getStudyGroup());
                 response = new RemoveLowerResponse(removedGroups);
@@ -62,7 +65,7 @@ public class Server {
                 Set<StudyGroup> removedGroups = administration.removeAllByStudentsCount(((RemoveAllByStudentsCountCommand) command).getCount());
                 response = new RemoveAllByStudentsCountResponse(removedGroups);
             } else if(command instanceof CountByGroupAdminCommand) {
-                int count = administration.countByGroupAdmin(((CountByGroupAdminCommand) command).getGroupAdmin());
+                long count = administration.countByGroupAdmin(((CountByGroupAdminCommand) command).getGroupAdmin());
                 response = new CountByGroupAdminResponse(count);
             } else if(command instanceof FilterLessThanSemesterEnumCommand) {
                 Set<StudyGroup> studyGroupsWithLessEnum = administration.filterLessThanSemesterEnum(((FilterLessThanSemesterEnumCommand) command).getSemesterEnum());

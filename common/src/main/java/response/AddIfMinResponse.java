@@ -5,13 +5,13 @@ import domain.StudyGroup;
 import java.io.Serializable;
 
 public class AddIfMinResponse implements Serializable, Response {
-    private final StudyGroup studyGroup;
+    private final Boolean wasAdded;
 
-    public AddIfMinResponse(StudyGroup studyGroup) {
-        this.studyGroup = studyGroup;
+    public AddIfMinResponse(Boolean wasAdded) {
+        this.wasAdded = wasAdded;
     }
 
-    public StudyGroup getStudyGroup() {
-        return studyGroup;
+    public Boolean getWasAdded() {
+        return wasAdded;
     }
 }

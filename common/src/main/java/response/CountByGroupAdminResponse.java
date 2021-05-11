@@ -3,13 +3,13 @@ package response;
 import java.io.Serializable;
 
 public class CountByGroupAdminResponse implements Serializable, Response {
-    private int count;
+    private final long count;
 
-    public CountByGroupAdminResponse(int count) {
+    public CountByGroupAdminResponse(long count) {
         this.count = count;
     }
 
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 }
