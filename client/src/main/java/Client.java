@@ -21,6 +21,8 @@ public class Client {
 
         /* Создайте экземпляр клиентского сокета. Нет необходимости в привязке к определенному порту */
         try (DatagramChannel channel = DatagramChannel.open()) {
+            channel.connect(new InetSocketAddress("localhost", SERVICE_PORT));
+
             while (true) {
                 Command command = commandReader.readCommand();
 
@@ -33,7 +35,6 @@ public class Client {
                     break;
                 }
 
-
                 //Сериализация команды
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 try (ObjectOutput objectOutput = new ObjectOutputStream(byteArrayOutputStream)) {
@@ -42,19 +43,18 @@ public class Client {
 
                 byte[] serializedCommand = byteArrayOutputStream.toByteArray();
 
-                //Send data to server
-                ByteBuffer buffer = ByteBuffer.allocate(serializedCommand.length);
-                buffer.put(serializedCommand);
 
-                channel.send(buffer, new InetSocketAddress("localhost", SERVICE_PORT));
+                ByteBuffer sendingBuffer = ByteBuffer.wrap(serializedCommand);
+                channel.write(sendingBuffer);
+
+                // Send data to server
 
                 //Receive data from server
-                buffer.flip();
-                channel.receive(buffer);
-                buffer.clear();
+                ByteBuffer receivingBuffer = ByteBuffer.allocate(1024*1024);
+                channel.read(receivingBuffer);
 
                 Object response = null;//todo это сделать нормально
-                try (ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(buffer.array()))) {
+                try (ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(receivingBuffer.array()))) {
                     response = responseInBytes.readObject();
                 } catch (ClassNotFoundException e) {//todo мне кажется что здесь не очень, но пока не уверен что
                     e.printStackTrace();

@@ -151,17 +151,9 @@ public class Server {
         while (true) {
             DatagramPacket inputPacket = connectionManager.getInputPacket(serverSocket);
             Command command = connectionManager.getCommand(inputPacket); // todo: null check (optional)
-            Response response = responseHandler.getResponse(command);
 
+            Response response = responseHandler.getResponse(command);
             responseHandler.sendResponse(response, inputPacket, serverSocket);
-            //ой кажется кривым ну да ладно
-            System.out.println("Do you want to exit");
-            Scanner in = new Scanner(System.in);
-            String inputString = in.nextLine();
-            if (inputString.equals("exit")) {
-                administration.save();
-                break;
-            }
         }
     }
 }
