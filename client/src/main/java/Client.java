@@ -5,10 +5,9 @@ import domain.StudyGroup;
 import response.*;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,11 +20,7 @@ public class Client {
         PrintRepresentation printRepresentation = new PrintRepresentation();
 
         /* Создайте экземпляр клиентского сокета. Нет необходимости в привязке к определенному порту */
-        try (DatagramSocket clientSocket = new DatagramSocket()) {
-
-            // Получите IP-адрес сервера
-            InetAddress IPAddress = InetAddress.getByName("localhost");
-
+        try (DatagramChannel channel = DatagramChannel.open()) {
             while (true) {
                 Command command = commandReader.readCommand();
 
@@ -47,20 +42,19 @@ public class Client {
 
                 byte[] serializedCommand = byteArrayOutputStream.toByteArray();
 
-                // Создайте UDP-пакет
-                DatagramPacket sendingPacket = new DatagramPacket(serializedCommand, serializedCommand.length, IPAddress, SERVICE_PORT);
+                //Send data to server
+                ByteBuffer buffer = ByteBuffer.allocate(serializedCommand.length);
+                buffer.put(serializedCommand);
 
-                // Отправьте UDP-пакет серверу
-                clientSocket.send(sendingPacket);
+                channel.send(buffer, new InetSocketAddress("localhost", SERVICE_PORT));
 
-                byte[] receivingDataBuffer = new byte[1024 * 1024]; // todo: нужно ли нам столько памяти в буфере
-
-                // Получите ответ от сервера
-                DatagramPacket receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-                clientSocket.receive(receivingPacket);
+                //Receive data from server
+                buffer.flip();
+                channel.receive(buffer);
+                buffer.clear();
 
                 Object response = null;//todo это сделать нормально
-                try (ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(receivingPacket.getData()))) {
+                try (ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(buffer.array()))) {
                     response = responseInBytes.readObject();
                 } catch (ClassNotFoundException e) {//todo мне кажется что здесь не очень, но пока не уверен что
                     e.printStackTrace();

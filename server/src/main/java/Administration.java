@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +51,8 @@ public class Administration {
     public StudyGroup add(StudyGroup studyGroup) {
 
         // todo: генерерировать id для studyGroup
+        Long randomId = ThreadLocalRandom.current().nextLong(100);
+        studyGroup.setId(randomId);
         groups.add(studyGroup);
         return studyGroup;
     }
@@ -191,9 +194,8 @@ public class Administration {
         return groupWithId.isPresent();
     }
 
-    public Set<StudyGroup> save() {
+    public void save() {
         fileStorage.writeCsv(groups);
-        return groups;
     }
 
     /**

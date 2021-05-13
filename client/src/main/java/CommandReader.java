@@ -1,7 +1,6 @@
 
 import commands.*;
 import domain.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -77,10 +76,8 @@ public class CommandReader {
                 return new RemoveByIdCommand(id);
             } else if (command.equals(CLEAR)) {
                 return new ClearCommand();
-            } else if (command.equals(SAVE)) {
-                return new SaveCommand();
             } else if (command.startsWith(EXECUTE_SCRIPT)) {
-                throw new NotImplementedException(); // fixme
+                return null; // fixme
                 /*
                 if (command.equals(EXECUTE_SCRIPT)) {
                     System.err.println("filename is missing");

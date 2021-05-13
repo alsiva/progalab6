@@ -7,73 +7,75 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Server {
     // Серверный UDP-сокет запущен на этом порту
-    public final static int SERVICE_PORT = 50001;
+    public final static int SERVICE_PORT = 50001; // todo: get from constructor
 
 
-    static class ResponseHandler {
-
-        private Administration administration;
-        private Command command;
-        private Response response;
-        private DatagramPacket inputPacket;
-        private DatagramSocket serverSocket;
+    static class ResponseHandler { // todo: move to separate file
+        private final Administration administration;
 
         public ResponseHandler(Administration administration) {
             this.administration = administration;
         }
 
         public Response getResponse(Command command) {
-            Response response = null; //todo notExistingCommandResponse
-            this.command = command;
-
             if (command instanceof HelpCommand) {
                 String help = administration.help();
-                response = new HelpResponse(help);
+                return new HelpResponse(help);
+
             } else if(command instanceof InfoCommand) {
                 String info = administration.info();
-                response = new InfoResponse(info);
+                return new InfoResponse(info);
+
             } else if(command instanceof ShowCommand) {
                 Set<StudyGroup> groups = administration.show();
-                response = new ShowResponse(groups);
+                return new ShowResponse(groups);
+
             } else if(command instanceof AddCommand) {
                 StudyGroup group = administration.add(((AddCommand) command).getGroup());
-                response = new AddResponse(group);
+                return new AddResponse(group);
+
             } else if(command instanceof UpdateIdCommand) {
                 Optional<StudyGroup> group = administration.updateId(((UpdateIdCommand) command).getGroup());
-                response = new UpdateIdResponse(group);
+                return new UpdateIdResponse(group);
+
             } else if(command instanceof RemoveByIdCommand) {
                 Optional<StudyGroup> studyGroup = administration.removeById(((RemoveByIdCommand) command).getId());
-                response = new RemoveByIdResponse(studyGroup);
-
+                return new RemoveByIdResponse(studyGroup);
 
             } else if(command instanceof ClearCommand) {
                 administration.clear();
-                response = new ClearResponse();
+                return new ClearResponse();
+
             } else if(command instanceof ExecuteScriptCommand) {
-                //todo command response for script execution
+                return null; //todo command response for script execution
             } else if(command instanceof AddIfMinCommand) {
                 Boolean wasAdded = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
-                response = new AddIfMinResponse(wasAdded);
+                return new AddIfMinResponse(wasAdded);
+
             } else if(command instanceof RemoveLowerCommand) {
                 Set<StudyGroup> removedGroups = administration.removeLower(((RemoveLowerCommand) command).getStudyGroup());
-                response = new RemoveLowerResponse(removedGroups);
+                return new RemoveLowerResponse(removedGroups);
+
             } else if(command instanceof RemoveAllByStudentsCountCommand) {
                 Set<StudyGroup> removedGroups = administration.removeAllByStudentsCount(((RemoveAllByStudentsCountCommand) command).getCount());
-                response = new RemoveAllByStudentsCountResponse(removedGroups);
+                return new RemoveAllByStudentsCountResponse(removedGroups);
+
             } else if(command instanceof CountByGroupAdminCommand) {
                 long count = administration.countByGroupAdmin(((CountByGroupAdminCommand) command).getGroupAdmin());
-                response = new CountByGroupAdminResponse(count);
+                return new CountByGroupAdminResponse(count);
+
             } else if(command instanceof FilterLessThanSemesterEnumCommand) {
                 Set<StudyGroup> studyGroupsWithLessEnum = administration.filterLessThanSemesterEnum(((FilterLessThanSemesterEnumCommand) command).getSemesterEnum());
-                response = new FilterLessThanSemesterEnumResponse(studyGroupsWithLessEnum);
-            } else {
-                System.err.println("Command not supported");
+                return new FilterLessThanSemesterEnumResponse(studyGroupsWithLessEnum);
             }
-            return response;
+
+            System.err.println("Command not supported");
+            return null;
         }
 
         public void sendResponse(Response response, DatagramPacket inputPacket, DatagramSocket serverSocket) throws IOException {
@@ -102,9 +104,8 @@ public class Server {
         }
     }
 
-    static class ConnectionManager {
-
-        public DatagramSocket setServerSocket() {
+    static class ConnectionManager {  // todo: move to separate file
+        public DatagramSocket getServerSocket() {
             try {
                 return new DatagramSocket(SERVICE_PORT);
             } catch (SocketException e) {
@@ -113,29 +114,22 @@ public class Server {
             return null;
         }
 
-        public DatagramPacket getInputPacket(DatagramSocket serverSocket) throws IOException{
+        public DatagramPacket getInputPacket(DatagramSocket serverSocket) throws IOException {
 
-                byte[] receivingDataBuffer = new byte[1024];
+            byte[] receivingDataBuffer = new byte[1024];
 
-                DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-                System.out.println("Waiting for a client to connect...");
+            DatagramPacket inputPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+            System.out.println("Waiting for a packet from client");
 
-                while (true) {
-                    serverSocket.receive(inputPacket);
-                    return inputPacket;
-                }
-
+            serverSocket.receive(inputPacket);
+            return inputPacket;
         }
 
         public Command getCommand(DatagramPacket inputPacket) {
-            while (true) {
-                Command command;
-                try (ObjectInputStream commandInBytes = new ObjectInputStream(new ByteArrayInputStream(inputPacket.getData()))) {
-                    command = (Command) commandInBytes.readObject();
-                    return command;
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+            try (ObjectInputStream commandInBytes = new ObjectInputStream(new ByteArrayInputStream(inputPacket.getData()))) {
+                return (Command) commandInBytes.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                return null; // todo: optional
             }
         }
     }
@@ -152,12 +146,22 @@ public class Server {
         Administration administration = new Administration(filename);
         ResponseHandler responseHandler = new ResponseHandler(administration);
         ConnectionManager connectionManager = new ConnectionManager();
-        Command command = null;
-        DatagramSocket serverSocket = connectionManager.setServerSocket();
+        DatagramSocket serverSocket = connectionManager.getServerSocket();
+
         while (true) {
             DatagramPacket inputPacket = connectionManager.getInputPacket(serverSocket);
-            command = connectionManager.getCommand(inputPacket);
-            responseHandler.sendResponse(responseHandler.getResponse(command), inputPacket, serverSocket);
+            Command command = connectionManager.getCommand(inputPacket); // todo: null check (optional)
+            Response response = responseHandler.getResponse(command);
+
+            responseHandler.sendResponse(response, inputPacket, serverSocket);
+            //ой кажется кривым ну да ладно
+            System.out.println("Do you want to exit");
+            Scanner in = new Scanner(System.in);
+            String inputString = in.nextLine();
+            if (inputString.equals("exit")) {
+                administration.save();
+                break;
+            }
         }
     }
 }
