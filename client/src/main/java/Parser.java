@@ -1,5 +1,4 @@
-package domain;
-
+import domain.FailedToParseException;
 
 /**
  * parser interface
@@ -7,6 +6,5 @@ package domain;
  */
 @FunctionalInterface
 public interface Parser<T> {
-    // todo: move to client
     T parse(String str) throws FailedToParseException;
 }

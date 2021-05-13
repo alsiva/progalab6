@@ -12,16 +12,14 @@ import java.util.Optional;
 import java.util.Set;
 
 public class Client {
-    /* Порт сервера, к которому собирается подключиться клиентский сокет */
-    public final static int SERVICE_PORT = 50001;
+    private static final PrintRepresentation printRepresentation = new PrintRepresentation();
 
     public static void main(String[] args) {
         CommandReader commandReader = new CommandReader(new BufferedReader(new InputStreamReader(System.in)));
-        PrintRepresentation printRepresentation = new PrintRepresentation();
 
         /* Создайте экземпляр клиентского сокета. Нет необходимости в привязке к определенному порту */
         try (DatagramChannel channel = DatagramChannel.open()) {
-            channel.connect(new InetSocketAddress("localhost", SERVICE_PORT));
+            channel.connect(new InetSocketAddress("localhost", Constants.SERVICE_PORT));
 
             while (true) {
                 Command command = commandReader.readCommand();
@@ -43,14 +41,13 @@ public class Client {
 
                 byte[] serializedCommand = byteArrayOutputStream.toByteArray();
 
-
                 ByteBuffer sendingBuffer = ByteBuffer.wrap(serializedCommand);
                 channel.write(sendingBuffer);
 
                 // Send data to server
 
                 //Receive data from server
-                ByteBuffer receivingBuffer = ByteBuffer.allocate(1024*1024);
+                ByteBuffer receivingBuffer = ByteBuffer.allocate(Constants.BUFFER_CAPACITY);
                 channel.read(receivingBuffer);
 
                 Object response = null;//todo это сделать нормально

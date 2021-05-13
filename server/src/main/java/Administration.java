@@ -49,9 +49,7 @@ public class Administration {
     }
 
     public StudyGroup add(StudyGroup studyGroup) {
-
-        // todo: генерерировать id для studyGroup
-        Long randomId = ThreadLocalRandom.current().nextLong(100);
+        Long randomId = ThreadLocalRandom.current().nextLong(100); //todo: переписать как было раньше
         studyGroup.setId(randomId);
         groups.add(studyGroup);
         return studyGroup;
@@ -353,12 +351,9 @@ public class Administration {
 
                 writer.close();
 
-            } catch (FileNotFoundException e) {
-                System.err.println("Unable to save file");
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Unable to save file");
             }
-
         }
     }
 
