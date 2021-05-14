@@ -2,7 +2,10 @@ import commands.*;
 import domain.StudyGroup;
 import response.*;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ResponseHandler {
     private final Administration administration;
@@ -17,16 +20,16 @@ public class ResponseHandler {
             return new HelpResponse(help);
 
         } else if (command instanceof InfoCommand) {
-            Set<StudyGroup> groups = administration.info();
-            return new InfoResponse(groups);
+            Set<StudyGroup> groups = administration.getGroups();
+            return new InfoResponse(groups.getClass(), groups.size());
 
         } else if (command instanceof ShowCommand) {
-            Set<StudyGroup> groups = administration.show();
-            return new ShowResponse(groups);
+            Set<StudyGroup> groups = administration.getGroups();
+            return new ShowResponse(sorted(groups));
 
         } else if (command instanceof AddCommand) {
-            StudyGroup group = administration.add(((AddCommand) command).getGroup());
-            return new AddResponse(group);
+            long id = administration.add(((AddCommand) command).getGroup());
+            return new AddResponse(id);
 
         } else if (command instanceof UpdateIdCommand) {
             boolean wasUpdated = administration.updateId(((UpdateIdCommand) command).getGroup());
@@ -37,22 +40,20 @@ public class ResponseHandler {
             return new RemoveByIdResponse(wasRemoved);
 
         } else if (command instanceof ClearCommand) {
-            administration.clear();
-            return new ClearResponse();
+            int elementsRemovedCount = administration.clear();
+            return new ClearResponse(elementsRemovedCount);
 
-        } else if (command instanceof ExecuteScriptCommand) {
-            return null; //todo command response for script execution
         } else if (command instanceof AddIfMinCommand) {
             boolean wasAdded = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
             return new AddIfMinResponse(wasAdded);
 
         } else if (command instanceof RemoveLowerCommand) {
             Set<StudyGroup> removedGroups = administration.removeLower(((RemoveLowerCommand) command).getStudyGroup());
-            return new RemoveLowerResponse(removedGroups);
+            return new RemoveLowerResponse(sorted(removedGroups));
 
         } else if (command instanceof RemoveAllByStudentsCountCommand) {
             Set<StudyGroup> removedGroups = administration.removeAllByStudentsCount(((RemoveAllByStudentsCountCommand) command).getCount());
-            return new RemoveAllByStudentsCountResponse(removedGroups);
+            return new RemoveAllByStudentsCountResponse(sorted(removedGroups));
 
         } else if (command instanceof CountByGroupAdminCommand) {
             long count = administration.countByGroupAdmin(((CountByGroupAdminCommand) command).getGroupAdmin());
@@ -60,7 +61,8 @@ public class ResponseHandler {
 
         } else if (command instanceof FilterLessThanSemesterEnumCommand) {
             Set<StudyGroup> studyGroupsWithLessEnum = administration.filterLessThanSemesterEnum(((FilterLessThanSemesterEnumCommand) command).getSemesterEnum());
-            return new FilterLessThanSemesterEnumResponse(studyGroupsWithLessEnum);
+
+            return new FilterLessThanSemesterEnumResponse(sorted(studyGroupsWithLessEnum));
         }
 
         throw new CommandNotRecognizedException(command);
@@ -78,4 +80,11 @@ public class ResponseHandler {
             return notRecognizedCommand;
         }
     }
+
+    private static List<StudyGroup> sorted(Set<StudyGroup> groups) {
+        return groups.stream()
+                .sorted(studentCountComparator)
+                .collect(Collectors.toList());
+    }
+    private static final Comparator<? super StudyGroup> studentCountComparator = Comparator.comparing(StudyGroup::getStudentsCount);
 }

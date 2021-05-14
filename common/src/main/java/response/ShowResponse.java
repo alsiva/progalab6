@@ -1,17 +1,18 @@
 package response;
+
 import domain.StudyGroup;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 public class ShowResponse implements Serializable, Response {
-    private final Set<StudyGroup> groups;
+    private final List<StudyGroup> groups;
 
-    public ShowResponse(Set<StudyGroup> groups) {
+    public ShowResponse(List<StudyGroup> groups) {
         this.groups = groups;
     }
 
-    public Set<StudyGroup> getGroups() {
+    public List<StudyGroup> getGroups() {
         return groups;
     }
 }

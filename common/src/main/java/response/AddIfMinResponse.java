@@ -1,7 +1,5 @@
 package response;
 
-import domain.StudyGroup;
-
 import java.io.Serializable;
 
 public class AddIfMinResponse implements Serializable, Response {

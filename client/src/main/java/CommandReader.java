@@ -30,8 +30,6 @@ public class CommandReader {
     private final static String UPDATE = "update";
     private final static String REMOVE_BY_ID = "remove_by_id";
     private static final String CLEAR = "clear";
-    private static final String SAVE = "save";
-    private static final String EXECUTE_SCRIPT = "execute_script";
     private static final String ADD_IF_MIN = "add_if_min";
     private static final String REMOVE_LOWER = "remove_lower";
     private static final String HISTORY = "history";
@@ -71,36 +69,6 @@ public class CommandReader {
             return new RemoveByIdCommand(id);
         } else if (command.equals(CLEAR)) {
             return new ClearCommand();
-        } else if (command.startsWith(EXECUTE_SCRIPT)) {
-            throw new IOException("not implemented"); // fixme
-            /*
-            if (command.equals(EXECUTE_SCRIPT)) {
-                System.err.println("filename is missing");
-                continue;
-            }
-
-            String fileName = command.substring(EXECUTE_SCRIPT.length()).trim();
-
-
-            if (scriptStack.contains(fileName)) {
-                System.err.println(fileName + "is already being executed");
-                return;
-            }
-            scriptStack.push(fileName);
-
-            File file = new File(fileName);
-
-            if (!file.exists()) {
-                System.err.println("file doesn't exist");
-                continue;
-            }
-
-            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-
-            new CommandReader(fileReader, scriptStack).readCommands();
-
-             */
-
         } else if (command.equals(ADD_IF_MIN)) {
             return new AddIfMinCommand(readStudyGroup());
         } else if (command.equals(REMOVE_LOWER)) {

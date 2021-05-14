@@ -37,7 +37,7 @@ public class Administration {
 
     private static final Random rng = new Random();
 
-    public StudyGroup add(StudyGroup studyGroup) {
+    public long add(StudyGroup studyGroup) {
         Set<Long> existingIds = new HashSet<>();
 
         for (StudyGroup group: groups) {
@@ -51,22 +51,13 @@ public class Administration {
 
         studyGroup.setId(id);
         groups.add(studyGroup);
-        return studyGroup;
+        return id;
     }
 
     /**
-     * returns information about collection
-     * @return
+     * @return study groups
      */
-    public Set<StudyGroup> info() {
-        return groups;
-    }
-
-    /**
-     * shows all study groups in collection
-     * @return study groups in collection
-     */
-    public Set<StudyGroup> show() {
+    public Set<StudyGroup> getGroups() {
         return groups;
     }
 
@@ -110,9 +101,12 @@ public class Administration {
 
     /**
      * clears collection from all study groups
+     * @return
      */
-    public void clear() {
+    public int clear() {
+        int size = groups.size();
         groups.clear();
+        return size;
     }
 
     /**
@@ -137,7 +131,7 @@ public class Administration {
      * @param other study group
      * @return true if element was removed
      */
-    public Set<StudyGroup> removeLower(StudyGroup other) { //удаляет из коллекции все элементы, в которых кол-во студентов меньше чем в other
+    public Set<StudyGroup> removeLower(StudyGroup other) {
         Set<StudyGroup> removedGroups = groups
                 .stream()
                 .filter(studyGroup -> studyGroup.getStudentsCount() < other.getStudentsCount())

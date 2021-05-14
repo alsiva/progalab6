@@ -1,17 +1,15 @@
 package response;
 
-import domain.StudyGroup;
-
 import java.io.Serializable;
 
 public class AddResponse implements Serializable, Response {
-    private final StudyGroup group;
+    private final long studyGroupId;
 
-    public AddResponse(StudyGroup group) {
-        this.group = group;
+    public AddResponse(long studyGroupId) {
+        this.studyGroupId = studyGroupId;
     }
 
-    public StudyGroup getGroup() {
-        return group;
+    public long getStudyGroupId() {
+        return studyGroupId;
     }
 }

@@ -3,16 +3,16 @@ package response;
 import domain.StudyGroup;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 public class FilterLessThanSemesterEnumResponse implements Serializable, Response {
-    private final Set<StudyGroup> studyGroupWithLessSemester;
+    private final List<StudyGroup> studyGroupWithLessSemester;
 
-    public FilterLessThanSemesterEnumResponse(Set<StudyGroup> studyGroupWithLessSemester) {
+    public FilterLessThanSemesterEnumResponse(List<StudyGroup> studyGroupWithLessSemester) {
         this.studyGroupWithLessSemester = studyGroupWithLessSemester;
     }
 
-    public Set<StudyGroup> getStudyGroupWithLessSemester() {
+    public List<StudyGroup> getStudyGroupWithLessSemester() {
         return studyGroupWithLessSemester;
     }
 }

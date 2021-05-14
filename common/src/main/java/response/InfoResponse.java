@@ -1,21 +1,24 @@
 package response;
 
-import domain.StudyGroup;
-
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Set;
 
 public class InfoResponse implements Serializable, Response {
-    private final Set<StudyGroup> groups;
+    private final Class<?> collectionType;
+    private final int collectionSize;
     private final Instant creationDate = Instant.now();
 
-    public InfoResponse(Set<StudyGroup> groups) {
-        this.groups = groups;
+    public InfoResponse(Class<?> collectionType, int collectionSize) {
+        this.collectionType = collectionType;
+        this.collectionSize = collectionSize;
     }
 
-    public Set<StudyGroup> getGroups() {
-        return groups;
+    public Class<?> getCollectionType() {
+        return collectionType;
+    }
+
+    public int getCollectionSize() {
+        return collectionSize;
     }
 
     public Instant getCreationDate() {
