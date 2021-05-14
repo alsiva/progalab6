@@ -14,4 +14,9 @@ public class AddCommand implements Serializable, Command {
     public StudyGroup getGroup() {
         return group;
     }
+
+    @Override
+    public String toPrint() {
+        return "Add study group";
+    }
 }

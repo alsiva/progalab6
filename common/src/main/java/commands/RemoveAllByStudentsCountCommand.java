@@ -12,4 +12,9 @@ public class RemoveAllByStudentsCountCommand implements Serializable, Command {
     public Long getCount() {
         return count;
     }
+
+    @Override
+    public String toPrint() {
+        return "Remove all groups that have " + count + " students";
+    }
 }

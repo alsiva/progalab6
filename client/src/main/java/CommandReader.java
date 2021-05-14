@@ -12,15 +12,9 @@ import java.util.*;
  */
 public class CommandReader {
     private final BufferedReader in;
-    private final Stack<String> scriptStack;
 
     public CommandReader(BufferedReader in) {
-        this(in, new Stack<>());
-    }
-
-    private CommandReader(BufferedReader in, Stack<String> scriptStack) {
         this.in = in;
-        this.scriptStack = scriptStack;
     }
 
     private static final String HELP = "help";

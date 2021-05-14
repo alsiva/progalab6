@@ -14,4 +14,9 @@ public class UpdateIdCommand implements Serializable, Command {
     public StudyGroup getGroup() {
         return group;
     }
+
+    @Override
+    public String toPrint() {
+        return "Update study group with id " + group.getId();
+    }
 }

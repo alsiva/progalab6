@@ -38,7 +38,7 @@ public class Client {
 
             if (command instanceof HistoryCommand) {
                 for (Command recentCommand : commandManager.getLastCommands()) {
-                    System.out.println(recentCommand);
+                    System.out.println(recentCommand.toPrint());
                 }
                 continue;
             }

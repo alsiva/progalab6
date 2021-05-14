@@ -14,4 +14,9 @@ public class FilterLessThanSemesterEnumCommand implements Command, Serializable 
     public Semester getSemesterEnum() {
         return semesterEnum;
     }
+
+    @Override
+    public String toPrint() {
+        return "Get study groups that have semester less then " + semesterEnum;
+    }
 }

@@ -15,4 +15,8 @@ public class RemoveLowerCommand implements Serializable, Command {
         return studyGroup;
     }
 
+    @Override
+    public String toPrint() {
+        return "Remove study groups that have less students then " + studyGroup.getStudentsCount();
+    }
 }

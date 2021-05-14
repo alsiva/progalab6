@@ -12,4 +12,9 @@ public class RemoveByIdCommand implements Serializable, Command {
     public Long getId() {
         return id;
     }
+
+    @Override
+    public String toPrint() {
+        return "Remove group with id " + id;
+    }
 }

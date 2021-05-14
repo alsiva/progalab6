@@ -14,4 +14,9 @@ public class AddIfMinCommand implements Serializable, Command {
     public StudyGroup getStudyGroup() {
         return studyGroup;
     }
+
+    @Override
+    public String toPrint() {
+        return "Add study group, if it has less students, then other groups";
+    }
 }
