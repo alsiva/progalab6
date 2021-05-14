@@ -11,8 +11,6 @@ public class Server {
             return;
         }
 
-        // todo: обрабатывать команду save
-
         String filename = args[0];
         Administration administration = new Administration(filename);
         ResponseHandler responseHandler = new ResponseHandler(administration);

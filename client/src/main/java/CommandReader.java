@@ -14,8 +14,6 @@ public class CommandReader {
     private final BufferedReader in;
     private final Stack<String> scriptStack;
 
-    private final Queue<String> lastCommands = new LinkedList<>();
-
     public CommandReader(BufferedReader in) {
         this(in, new Stack<>());
     }
@@ -47,113 +45,99 @@ public class CommandReader {
      * method that reads string commands from user or script
      */
     public Command readCommand() throws IOException {
-        while (true) {
-            System.out.println("Please enter command:");
-            String command = in.readLine();
-            if (command == null) {
-                return null;
-            }
-
-            if (command.equals(HELP)) {
-                return new HelpCommand();
-            } else if (command.equals(INFO)) {
-                return new InfoCommand();
-            } else if (command.equals(SHOW)) {
-                return new ShowCommand();
-            } else if (command.equals(ADD)) {
-                return new AddCommand(readStudyGroup());
-            } else if (command.startsWith(UPDATE)) {
-                return new UpdateIdCommand(readStudyGroup());
-            } else if (command.startsWith(REMOVE_BY_ID)) {
-                String idAsStr = command.substring(REMOVE_BY_ID.length()).trim();
-                long id;
-                try {
-                    id = Long.parseLong(idAsStr);
-                } catch (NumberFormatException e) {
-                    System.err.println("Illegal argument for remove_by_id: " + idAsStr + " is not a long");
-                    continue;
-                }
-                return new RemoveByIdCommand(id);
-            } else if (command.equals(CLEAR)) {
-                return new ClearCommand();
-            } else if (command.startsWith(EXECUTE_SCRIPT)) {
-                return null; // fixme
-                /*
-                if (command.equals(EXECUTE_SCRIPT)) {
-                    System.err.println("filename is missing");
-                    continue;
-                }
-
-                String fileName = command.substring(EXECUTE_SCRIPT.length()).trim();
-
-
-                if (scriptStack.contains(fileName)) {
-                    System.err.println(fileName + "is already being executed");
-                    return;
-                }
-                scriptStack.push(fileName);
-
-                File file = new File(fileName);
-
-                if (!file.exists()) {
-                    System.err.println("file doesn't exist");
-                    continue;
-                }
-
-                BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-
-                new CommandReader(fileReader, scriptStack).readCommands(); // todo: fix
-
-                 */
-
-            } else if (command.equals(ADD_IF_MIN)) {
-                return new AddIfMinCommand(readStudyGroup());
-            } else if (command.equals(REMOVE_LOWER)) {
-                return new RemoveLowerCommand(readStudyGroup());
-            } else if (command.equals(HISTORY)) {
-                return new HistoryCommand();
-            } else if (command.startsWith(REMOVE_ALL_BY_STUDENTS_COUNT)) {
-                String countAsStr = command.substring(REMOVE_ALL_BY_STUDENTS_COUNT.length()).trim();
-                long count;
-                try {
-                    count = Long.parseLong(countAsStr);
-                } catch (NumberFormatException e) {
-                    System.err.println("Illegal argument for remove_all_by_students_count: " + countAsStr + " is not long");
-                    continue;
-                }
-                return new RemoveAllByStudentsCountCommand(count);
-            } else if (command.equals(COUNT_BY_GROUP_ADMIN)) {
-                Person groupAdmin = readGroupAdmin();
-                if (groupAdmin == null) {
-                    System.err.println("Illegal argument for " + COUNT_BY_GROUP_ADMIN + ": admin should not be null");
-                    continue;
-                }
-                return new CountByGroupAdminCommand(groupAdmin);
-            } else if (command.startsWith(FILTER_LESS_THAN_SEMESTER_ENUM)) {
-                String semesterAsString = command.substring(FILTER_LESS_THAN_SEMESTER_ENUM.length()).trim();
-                Semester semester;
-                try {
-                    semester = Semester.valueOf(semesterAsString);
-                } catch (IllegalArgumentException e) {
-                    System.err.println("Illegal argument for filter_less_than_semester_enum: failed to parse semester");
-                    return null;
-                }
-
-                return new FilterLessThanSemesterEnumCommand(semester);
-
-            } else if (command.equals(EXIT)) {
-                return new ExitCommand();
-            }
-
-            lastCommands.add(command);
-            if (lastCommands.size() > 10) {
-                lastCommands.remove();
-            }
-
-            System.err.println("command " + command + " not recognized");
-            return null;
+        String command = in.readLine();
+        if (command == null) {
+            throw new IOException("Command not entered");
         }
 
+        if (command.equals(HELP)) {
+            return new HelpCommand();
+        } else if (command.equals(INFO)) {
+            return new InfoCommand();
+        } else if (command.equals(SHOW)) {
+            return new ShowCommand();
+        } else if (command.equals(ADD)) {
+            return new AddCommand(readStudyGroup());
+        } else if (command.startsWith(UPDATE)) {
+            return new UpdateIdCommand(readStudyGroup());
+        } else if (command.startsWith(REMOVE_BY_ID)) {
+            String idAsStr = command.substring(REMOVE_BY_ID.length()).trim();
+            long id;
+            try {
+                id = Long.parseLong(idAsStr);
+            } catch (NumberFormatException e) {
+                throw new IOException("Illegal argument for remove_by_id: " + idAsStr + " is not a long", e);
+            }
+            return new RemoveByIdCommand(id);
+        } else if (command.equals(CLEAR)) {
+            return new ClearCommand();
+        } else if (command.startsWith(EXECUTE_SCRIPT)) {
+            throw new IOException("not implemented"); // fixme
+            /*
+            if (command.equals(EXECUTE_SCRIPT)) {
+                System.err.println("filename is missing");
+                continue;
+            }
+
+            String fileName = command.substring(EXECUTE_SCRIPT.length()).trim();
+
+
+            if (scriptStack.contains(fileName)) {
+                System.err.println(fileName + "is already being executed");
+                return;
+            }
+            scriptStack.push(fileName);
+
+            File file = new File(fileName);
+
+            if (!file.exists()) {
+                System.err.println("file doesn't exist");
+                continue;
+            }
+
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+
+            new CommandReader(fileReader, scriptStack).readCommands();
+
+             */
+
+        } else if (command.equals(ADD_IF_MIN)) {
+            return new AddIfMinCommand(readStudyGroup());
+        } else if (command.equals(REMOVE_LOWER)) {
+            return new RemoveLowerCommand(readStudyGroup());
+        } else if (command.equals(HISTORY)) {
+            return new HistoryCommand();
+        } else if (command.startsWith(REMOVE_ALL_BY_STUDENTS_COUNT)) {
+            String countAsStr = command.substring(REMOVE_ALL_BY_STUDENTS_COUNT.length()).trim();
+            long count;
+            try {
+                count = Long.parseLong(countAsStr);
+            } catch (NumberFormatException e) {
+                throw new IOException("Illegal argument for remove_all_by_students_count: " + countAsStr + " is not long", e);
+            }
+            return new RemoveAllByStudentsCountCommand(count);
+        } else if (command.equals(COUNT_BY_GROUP_ADMIN)) {
+            Person groupAdmin = readGroupAdmin();
+            if (groupAdmin == null) {
+                throw new IOException("Illegal argument for " + COUNT_BY_GROUP_ADMIN + ": admin should not be null");
+            }
+            return new CountByGroupAdminCommand(groupAdmin);
+        } else if (command.startsWith(FILTER_LESS_THAN_SEMESTER_ENUM)) {
+            String semesterAsString = command.substring(FILTER_LESS_THAN_SEMESTER_ENUM.length()).trim();
+            Semester semester;
+            try {
+                semester = Semester.valueOf(semesterAsString);
+            } catch (IllegalArgumentException e) {
+                throw new IOException("Illegal argument for filter_less_than_semester_enum: failed to parse semester", e);
+            }
+
+            return new FilterLessThanSemesterEnumCommand(semester);
+
+        } else if (command.equals(EXIT)) {
+            return new ExitCommand();
+        }
+
+        throw new IOException("command " + command + " not recognized");
     }
 
     private static final Random rng = new Random();

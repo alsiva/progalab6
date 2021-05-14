@@ -2,7 +2,6 @@ import commands.*;
 import domain.StudyGroup;
 import response.*;
 
-import java.util.Optional;
 import java.util.Set;
 
 public class ResponseHandler {
@@ -18,8 +17,8 @@ public class ResponseHandler {
             return new HelpResponse(help);
 
         } else if (command instanceof InfoCommand) {
-            String info = administration.info();
-            return new InfoResponse(info);
+            Set<StudyGroup> groups = administration.info();
+            return new InfoResponse(groups);
 
         } else if (command instanceof ShowCommand) {
             Set<StudyGroup> groups = administration.show();
@@ -30,12 +29,12 @@ public class ResponseHandler {
             return new AddResponse(group);
 
         } else if (command instanceof UpdateIdCommand) {
-            Optional<StudyGroup> group = administration.updateId(((UpdateIdCommand) command).getGroup());
-            return new UpdateIdResponse(group);
+            boolean wasUpdated = administration.updateId(((UpdateIdCommand) command).getGroup());
+            return new UpdateIdResponse(wasUpdated);
 
         } else if (command instanceof RemoveByIdCommand) {
-            Optional<StudyGroup> studyGroup = administration.removeById(((RemoveByIdCommand) command).getId());
-            return new RemoveByIdResponse(studyGroup);
+            boolean wasRemoved = administration.removeById(((RemoveByIdCommand) command).getId());
+            return new RemoveByIdResponse(wasRemoved);
 
         } else if (command instanceof ClearCommand) {
             administration.clear();
@@ -44,7 +43,7 @@ public class ResponseHandler {
         } else if (command instanceof ExecuteScriptCommand) {
             return null; //todo command response for script execution
         } else if (command instanceof AddIfMinCommand) {
-            Boolean wasAdded = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
+            boolean wasAdded = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup());
             return new AddIfMinResponse(wasAdded);
 
         } else if (command instanceof RemoveLowerCommand) {

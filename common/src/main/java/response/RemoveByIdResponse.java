@@ -1,18 +1,15 @@
 package response;
 
-import domain.StudyGroup;
-
 import java.io.Serializable;
-import java.util.Optional;
 
 public class RemoveByIdResponse implements Serializable, Response {
-    private final Optional<StudyGroup> studyGroup;
+    private final boolean wasRemoved;
 
-    public RemoveByIdResponse(Optional<StudyGroup> studyGroup) {
-        this.studyGroup = studyGroup;
+    public RemoveByIdResponse(boolean wasRemoved) {
+        this.wasRemoved = wasRemoved;
     }
 
-    public Optional<StudyGroup> getStudyGroup() {
-        return studyGroup;
+    public boolean getWasRemoved() {
+        return wasRemoved;
     }
 }

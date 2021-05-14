@@ -1,18 +1,15 @@
 package response;
 
-import domain.StudyGroup;
-
 import java.io.Serializable;
-import java.util.Optional;
 
 public class UpdateIdResponse implements Serializable, Response {
-    private Optional<StudyGroup> group;
+    private final boolean wasUpdated;
 
-    public UpdateIdResponse(Optional<StudyGroup> group) {
-        this.group = group;
+    public UpdateIdResponse(boolean wasUpdated) {
+        this.wasUpdated = wasUpdated;
     }
 
-    public Optional<StudyGroup> getGroup() {
-        return group;
+    public boolean getWasUpdated() {
+        return wasUpdated;
     }
 }
