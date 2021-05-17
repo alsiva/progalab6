@@ -11,6 +11,10 @@ plugins {
     id 'application'
 }
 
+run {
+    standardInput = System.in
+}
+
 dependencies {
     implementation project(':common')
 }
