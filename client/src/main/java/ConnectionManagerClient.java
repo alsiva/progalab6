@@ -29,7 +29,8 @@ public class ConnectionManagerClient {
     public Response receiveResponse() throws IOException, ClassNotFoundException {
         ByteBuffer receivingBuffer = ByteBuffer.allocate(Constants.BUFFER_CAPACITY);
         channel.read(receivingBuffer);
-        ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(receivingBuffer.array()));
-        return (Response)responseInBytes.readObject();
+        try (ObjectInputStream responseInBytes = new ObjectInputStream(new ByteArrayInputStream(receivingBuffer.array()))) {
+            return (Response) responseInBytes.readObject();
+        }
     }
 }

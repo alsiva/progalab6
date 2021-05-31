@@ -2,83 +2,59 @@ import commands.Command;
 import response.Response;
 
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 
 public class ConnectionManager {
-    private final DatagramSocket socket;
-    private final byte[] buffer = new byte[Constants.BUFFER_CAPACITY];
+    private final DatagramChannel channel;
 
-    public ConnectionManager(int port) throws SocketException {
-        this.socket = new DatagramSocket(port);
+    public ConnectionManager(int port) throws IOException {
+        //creates datagramChannel
+        channel = DatagramChannel.open();
+        channel.socket().bind(new InetSocketAddress(port));
     }
 
     public CommandFromClient receiveCommand() throws IOException, ClassNotFoundException {
-        DatagramPacket inputPacket = new DatagramPacket(buffer, buffer.length);
+        ByteBuffer inputBuffer = ByteBuffer.allocate(Constants.BUFFER_CAPACITY);
+        SocketAddress senderAddress = channel.receive(inputBuffer);
 
-        socket.receive(inputPacket);
-
-        try (ObjectInputStream commandInBytes = new ObjectInputStream(new ByteArrayInputStream(inputPacket.getData()))) {
+        try (ObjectInputStream commandInBytes = new ObjectInputStream(new ByteArrayInputStream(inputBuffer.array()))) {
             Command command = (Command) commandInBytes.readObject();
-            return new CommandFromClient(command, ClientInfo.fromPacket(inputPacket));
+
+            return new CommandFromClient(command, senderAddress);
         }
     }
 
-    public void sendResponse(Response response, ClientInfo clientInfo) throws IOException {
-        // сериализцаия Response
+    public void sendResponse(Response response, SocketAddress socketAddress) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (ObjectOutput objectOutput = new ObjectOutputStream(byteArrayOutputStream)) {
             objectOutput.writeObject(response);
             byteArrayOutputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         byte[] serializedResponse = byteArrayOutputStream.toByteArray();
+        ByteBuffer sendingBuffer = ByteBuffer.wrap(serializedResponse);
 
-        // Создайте новый UDP-пакет с данными, чтобы отправить их клиенту
-        DatagramPacket outputPacket = new DatagramPacket(
-                serializedResponse,
-                serializedResponse.length,
-                clientInfo.senderAddress,
-                clientInfo.senderPort
-        );
-
-        // Отправьте пакет клиенту
-        socket.send(outputPacket);
-    }
-
-    public static class ClientInfo {
-        private final InetAddress senderAddress;
-        private final int senderPort;
-
-        private ClientInfo(InetAddress senderAddress, int senderPort) {
-            this.senderAddress = senderAddress;
-            this.senderPort = senderPort;
-        }
-
-        private static ClientInfo fromPacket(DatagramPacket inputPacket) {
-            return new ClientInfo(inputPacket.getAddress(), inputPacket.getPort());
-        }
+        channel.send(sendingBuffer, socketAddress);
     }
 
     public static class CommandFromClient {
         private final Command command;
-        private final ClientInfo clientInfo;
+        private final SocketAddress senderAddress;
 
-        public CommandFromClient(Command command, ClientInfo clientInfo) {
+        public CommandFromClient(Command command, SocketAddress senderAddress) {
             this.command = command;
-            this.clientInfo = clientInfo;
+            this.senderAddress = senderAddress;
         }
 
         public Command getCommand() {
             return command;
         }
 
-        public ClientInfo getClientInfo() {
-            return clientInfo;
+        public SocketAddress getSenderAddress() {
+            return senderAddress;
         }
     }
 }

@@ -1,7 +1,6 @@
 import response.Response;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Scanner;
 
 public class Server {
@@ -18,7 +17,7 @@ public class Server {
         ConnectionManager connectionManager;
         try {
             connectionManager = new ConnectionManager(Constants.SERVICE_PORT);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             System.err.println("Error creating connection: " + e.getMessage());
             return;
         }
@@ -53,7 +52,7 @@ public class Server {
             }
 
             try {
-                connectionManager.sendResponse(response, commandFromClient.getClientInfo());
+                connectionManager.sendResponse(response, commandFromClient.getSenderAddress());
             } catch (IOException e) {
                 System.err.println("Failed to send response");
             }
