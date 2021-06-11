@@ -1,17 +1,28 @@
 import response.Response;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Server {
     public static void main(String[] args) {
-        if (args.length == 0) {
-            System.err.println("Please specify input file name as program argument");
+        if (args.length < 2) {
+            System.err.println("Please specify db username and password as program arguments");
             return;
         }
 
-        String filename = args[0];
-        Administration administration = new Administration(filename);
+        String username = args[0];
+        String password = args[1];
+
+        DatabaseManager databaseManager = new DatabaseManager(username, password);
+        Administration administration;
+        try {
+            administration = new Administration(databaseManager);
+        } catch (SQLException e) {
+            System.err.println("Failed to connect to database: " + e.getMessage());
+            return;
+        }
+
         ResponseHandler responseHandler = new ResponseHandler(administration);
 
         ConnectionManager connectionManager;
@@ -36,7 +47,6 @@ public class Server {
                 String inputString = in.nextLine();
 
                 if (inputString.equals("exit")) {
-                    administration.save();
                     break;
                 } else {
                     continue;

@@ -3,13 +3,13 @@ package commands;
 import java.io.Serializable;
 
 public class RemoveByIdCommand implements Serializable, Command {
-    private final Long id;
+    private final long id;
 
-    public RemoveByIdCommand(Long id) {
+    public RemoveByIdCommand(long id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

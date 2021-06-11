@@ -6,15 +6,26 @@ import java.io.Serializable;
  * class that defines location
  */
 public class Location implements Serializable {
-    public Location(int x, int y, String locationName) {
+    public Location(Integer id, int x, int y, String locationName) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.locationName = locationName;
     }
 
-    private final int x;
+    private Integer id; // Может быть null, если создано с клиента
+    private final int x; // not null
     private final int y; // Поле не может быть null
     private final String locationName; // Поле не может быть null
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 
     /**
      * returns coordinate x

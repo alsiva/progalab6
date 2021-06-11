@@ -1,9 +1,8 @@
-import com.opencsv.exceptions.CsvValidationException;
 import domain.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -11,47 +10,26 @@ import java.util.stream.Collectors;
  */
 public class Administration {
     private Set<StudyGroup> groups;
-    private final FileStorage fileStorage;
+    private final DatabaseManager databaseManager;
 
-    public Administration(String filename) {
-        this.fileStorage = new FileStorage(filename);
-        this.groups = readFromFile();
+    public Administration(DatabaseManager databaseManager) throws SQLException {
+        this.databaseManager = databaseManager;
+        this.groups = this.databaseManager.getStudyGroups();
     }
 
-    private Set<StudyGroup> readFromFile() {
+    public Optional<Long> add(StudyGroup studyGroup) {
+        Optional<Long> idOptional;
         try {
-            return fileStorage.readCSV();
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found (" + e.getMessage() + ")");
-        } catch (IOException e) {
-            System.err.println("Error while reading from file: " + e.getMessage());
-        } catch (CsvValidationException e) {
-            System.err.println("Failed to read file: " + e.getMessage());
-        } catch (FailedToParseException e) {
-            System.err.println("Failed to parse file: " + e.getMessage());
+            idOptional = this.databaseManager.addGroup(studyGroup);
+        } catch (SQLException e) {
+            System.err.println("Failed to add group: " + e.getMessage());
+            return Optional.empty();
         }
 
-        return Collections.emptySet();
-
-    }
-
-    private static final Random rng = new Random();
-
-    public long add(StudyGroup studyGroup) {
-        Set<Long> existingIds = new HashSet<>();
-
-        for (StudyGroup group: groups) {
-            existingIds.add(group.getId());
+        if (idOptional.isPresent()) {
+            this.groups.add(studyGroup);
         }
-
-        long id;
-        do {
-            id = rng.nextLong();
-        } while (existingIds.contains(id));
-
-        studyGroup.setId(id);
-        groups.add(studyGroup);
-        return id;
+        return idOptional;
     }
 
     /**
@@ -70,14 +48,32 @@ public class Administration {
      * @param other study group
      */
     public boolean updateId(StudyGroup other) {
-        groups = groups.stream()
-                .map(studyGroup -> studyGroup.getId().equals(other.getId())
-                        ? other
-                        : studyGroup
-                )
-                .collect(Collectors.toSet());
+        Optional<StudyGroup> groupToUpdateOptional = groups.stream()
+                .filter(studyGroup -> studyGroup.getId().equals(other.getId()))
+                .findFirst();
 
-        return groups.contains(other);
+        if (!groupToUpdateOptional.isPresent()) {
+            return false;
+        }
+        StudyGroup groupToUpdate = groupToUpdateOptional.get();
+
+        try {
+            boolean wasUpdated = databaseManager.updateGroup(other);
+            if (!wasUpdated) {
+                return false;
+            }
+            groups = groups.stream()
+                    .map(studyGroup -> studyGroup == groupToUpdate
+                            ? other
+                            : studyGroup
+                    )
+                    .collect(Collectors.toSet());
+
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error while saving group to db: " + e.getMessage());
+            return false;
+        }
 
     }
 
@@ -86,17 +82,31 @@ public class Administration {
      * @param id
      * @return true if group was removed
      */
-    public boolean removeById(Long id) {
-        Optional<StudyGroup> removedGroup = groups.stream()
+    public boolean removeById(long id) {
+        Optional<StudyGroup> groupToRemoveOptional = groups.stream()
                 .filter(studyGroup -> studyGroup.getId().equals(id))
                 .findFirst();
 
-        if (removedGroup.isPresent()) {
-            groups.remove(removedGroup.get());
-            return true;
+        if (!groupToRemoveOptional.isPresent()) {
+            return false;
         }
 
-        return false;
+        StudyGroup groupToRemove = groupToRemoveOptional.get();
+
+        try {
+            if (!databaseManager.removeStudyGroup(id)) {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error while removing group from db: " + e.getMessage());
+            return false;
+        }
+
+        groups = groups.stream()
+                .filter(studyGroup -> studyGroup != groupToRemove)
+                .collect(Collectors.toSet());
+
+        return true;
     }
 
     /**
@@ -104,9 +114,17 @@ public class Administration {
      * @return
      */
     public int clear() {
-        int size = groups.size();
-        groups.clear();
-        return size;
+        try {
+            int rowCount = databaseManager.clearStudyGroups();
+
+            if (rowCount > 0) {
+                groups.clear();
+            }
+            return rowCount;
+        } catch (SQLException e) {
+            System.err.println("Error while clearing collection: " + e.getMessage());
+            return 0;
+        }
     }
 
     /**
@@ -118,12 +136,21 @@ public class Administration {
                 .mapToInt(StudyGroup::getStudentsCount)
                 .min();
 
-        if (!min.isPresent() || other.getStudentsCount() < min.getAsInt()) {
-            groups.add(other);
-            return true;
+        if (min.isPresent() && other.getStudentsCount() >= min.getAsInt()) {
+            return false;
         }
 
-        return false;
+        try {
+            if (!databaseManager.addGroup(other).isPresent()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error while adding group (if it has lowest student count): " + e.getMessage());
+            return false;
+        }
+
+        groups.add(other);
+        return true;
     }
 
     /**
@@ -132,14 +159,7 @@ public class Administration {
      * @return true if element was removed
      */
     public Set<StudyGroup> removeLower(StudyGroup other) {
-        Set<StudyGroup> removedGroups = groups
-                .stream()
-                .filter(studyGroup -> studyGroup.getStudentsCount() < other.getStudentsCount())
-                .collect(Collectors.toSet());
-
-        groups.removeAll(removedGroups);
-
-        return removedGroups;
+        return removeGroups(studyGroup -> studyGroup.getStudentsCount() < other.getStudentsCount());
     }
 
     /**
@@ -147,13 +167,30 @@ public class Administration {
      * @param count
      */
     public Set<StudyGroup> removeAllByStudentsCount(long count) {
+        return this.removeGroups(studyGroup -> studyGroup.getStudentsCount() == count);
+    }
+
+    private Set<StudyGroup> removeGroups(Predicate<StudyGroup> condition) {
         Set<StudyGroup> groupsToRemove = groups.stream()
-                .filter(studyGroup -> studyGroup.getStudentsCount() == count)
+                .filter(condition)
                 .collect(Collectors.toSet());
 
-        groups.removeAll(groupsToRemove);
+        Set<Long> studyGroupIds = groupsToRemove.stream()
+                .map(StudyGroup::getId)
+                .collect(Collectors.toSet());
 
+        try {
+            if (!databaseManager.removeGroups(studyGroupIds)) {
+                return Collections.emptySet();
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to remove groups: " + e.getMessage());
+            return Collections.emptySet();
+        }
+
+        groups.removeAll(groupsToRemove);
         return groupsToRemove;
+
     }
 
     /**
@@ -173,10 +210,6 @@ public class Administration {
         return groups.stream()
                 .filter(studyGroup -> studyGroup.getSemesterEnum().ordinal() < semester.ordinal())
                 .collect(Collectors.toSet());
-    }
-
-    public void save() {
-        fileStorage.writeCsv(groups);
     }
 
     private static final String HELP_CONTENTS = "" +

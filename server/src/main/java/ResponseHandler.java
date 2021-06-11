@@ -4,6 +4,7 @@ import response.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class ResponseHandler {
             return new ShowResponse(sorted(groups));
 
         } else if (command instanceof AddCommand) {
-            long id = administration.add(((AddCommand) command).getGroup());
+            Optional<Long> id = administration.add(((AddCommand) command).getGroup());
             return new AddResponse(id);
 
         } else if (command instanceof UpdateIdCommand) {

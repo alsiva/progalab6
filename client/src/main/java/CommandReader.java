@@ -106,22 +106,12 @@ public class CommandReader {
 
 
 
-/**
-     * @return study group with random id
-     * @throws IOException if readUntilSuccess fails to read from standard input
-     */
-
-    private StudyGroup readStudyGroup() throws IOException {
-        return readStudyGroup(rng.nextLong());
-    }
-
-
     /**
-     * @param id auto-generated id
+     *
      * @return study group with defined id
      * @throws IOException if readUntilSuccess fails to read from standard input
      */
-    private StudyGroup readStudyGroup(long id) throws IOException {
+    private StudyGroup readStudyGroup() throws IOException {
         System.out.println("Please enter name");
         String name = readUntilSuccess(StudyGroup::readName);
 
@@ -151,7 +141,7 @@ public class CommandReader {
         Person groupAdmin = readGroupAdmin();
 
         return new StudyGroup(
-                id,
+                null,
                 name,
                 coordinates,
                 creationDate,
@@ -199,7 +189,7 @@ public class CommandReader {
 
         Location location = readLocation();
 
-        return new Person(adminName, adminBirthday, passportId, location);
+        return new Person(null, adminName, adminBirthday, passportId, location);
     }
 
     /**
@@ -221,7 +211,7 @@ public class CommandReader {
         System.out.println("Please enter location name");
         String locationName = readUntilSuccess();
 
-        return new Location(locationX, locationY, locationName);
+        return new Location(null, locationX, locationY, locationName);
     }
 
     private <T> T readUntilSuccess(Parser<T> parser) throws IOException {

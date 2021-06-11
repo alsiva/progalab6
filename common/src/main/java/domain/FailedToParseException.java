@@ -1,7 +1,7 @@
 package domain;
 
 /**
- * is thrown when failed to parse csv file
+ * is thrown when failed to parse field from string
  */
 public class FailedToParseException extends Exception {
     public FailedToParseException(String message) {

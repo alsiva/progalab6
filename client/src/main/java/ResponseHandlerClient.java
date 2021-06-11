@@ -3,6 +3,7 @@ import domain.StudyGroup;
 import response.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class ResponseHandlerClient {
@@ -23,7 +24,11 @@ public class ResponseHandlerClient {
                 System.out.println(printRepresentation.toPrint(studyGroup));
             }
         } else if (response instanceof AddResponse) {
-            System.out.println("Added group; generated id " + ((AddResponse) response).getStudyGroupId());
+            Optional<Long> studyGroupId = ((AddResponse) response).getStudyGroupId();
+            System.out.println(studyGroupId
+                    .map(id -> "Added group; generated id " + id)
+                    .orElse("Failed to add group")
+            );
 
         } else if (response instanceof UpdateIdResponse) {
             if (((UpdateIdResponse) response).getWasUpdated()) {

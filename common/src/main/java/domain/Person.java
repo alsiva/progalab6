@@ -10,18 +10,28 @@ import java.util.Objects;
  * class that defines person
  */
 public class Person implements Serializable {
-    public Person(String name, LocalDate birthday, String passportID, Location location){
+    public Person(Integer id, String name, LocalDate birthday, String passportID, Location location){
+        this.id = id;
         this.adminName = name;
         this.birthday = birthday;
         this.passportID = passportID;
         this.location = location;
     }
 
+    private Integer id; // Поле может быть null, если было создано с клиента
     private final String adminName; //Поле не может быть null, Строка не может быть пустой
     private final LocalDate birthday; //Поле не может быть null
     private final String passportID; //Длина строки должна быть не меньше 7, Поле может быть null
     private final Location location; //Поле может быть null
     private static final DateTimeFormatter BIRTHDAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     /**
      * @return person name

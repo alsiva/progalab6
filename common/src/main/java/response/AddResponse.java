@@ -1,15 +1,17 @@
 package response;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class AddResponse implements Serializable, Response {
-    private final long studyGroupId;
+    private final Optional<Long> studyGroupId;
 
-    public AddResponse(long studyGroupId) {
+    public AddResponse(Optional<Long> studyGroupId) {
         this.studyGroupId = studyGroupId;
     }
 
-    public long getStudyGroupId() {
+    public Optional<Long> getStudyGroupId() {
         return studyGroupId;
     }
 }

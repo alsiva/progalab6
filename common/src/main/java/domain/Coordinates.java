@@ -11,8 +11,8 @@ public class Coordinates implements Serializable {
         this.y = y;
     }
 
-    private float x; //Значение поля должно быть больше -318
-    private int y; //Максимальное значение поля: 870
+    private final float x; //Значение поля должно быть больше -318
+    private final int y; //Максимальное значение поля: 870
 
     /**
      * @return x coordinate

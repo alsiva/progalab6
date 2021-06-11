@@ -1,3 +1,4 @@
+
 CREATE TABLE LOCATION (
     ID serial primary key,
     NAME text not null,
