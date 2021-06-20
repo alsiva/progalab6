@@ -1,3 +1,8 @@
+CREATE TABLE USERS (
+    USERNAME text primary key,
+    PASSWORD_HASHED text not null
+);
+
 
 CREATE TABLE LOCATION (
     ID serial primary key,
@@ -26,10 +31,15 @@ CREATE TABLE STUDY_GROUP (
     STUDENT_COUNT int not null,
     FORM_OF_EDUCATION formOfEducation not null,
     SEMESTER semester not null,
-    GROUP_ADMIN_ID integer references PERSON -- nullable
+    GROUP_ADMIN_ID integer references PERSON, -- nullable
+    CREATOR text references USERS
 );
 
 -- creating initial data
+INSERT INTO USERS(
+USERNAME, PASSWORD_HASHED
+) values
+('john', '05d8edbc6123f8d785ef4a40f1b4641a'); -- 'doe'
 
 INSERT INTO LOCATION(
 NAME, X, Y
@@ -47,9 +57,9 @@ NAME, BIRTHDAY, PASSPORT, LOCATION_ID
 ('Roman', '2002-04-10', '4112123984', 3);
 
 INSERT INTO STUDY_GROUP (
-NAME, COORDINATE_X, COORDINATE_Y, CREATION_DATE, STUDENT_COUNT, FORM_OF_EDUCATION, SEMESTER, GROUP_ADMIN_ID
+NAME, COORDINATE_X, COORDINATE_Y, CREATION_DATE, STUDENT_COUNT, FORM_OF_EDUCATION, SEMESTER, GROUP_ADMIN_ID, CREATOR
 ) values
-('P3111', 5.5, 60, '2020-08-25 13:33:50'::timestamptz, 30, 'FULL_TIME_EDUCATION', 'SECOND', 1),
-('P3112', 8.7, 90, '2017-08-25 12:20:10'::timestamptz, 24, 'EVENING_CLASSES', 'SEVENTH', 2),
-('P3114', 5.2, 19, '2018-08-26 10:50:18'::timestamptz, 27, 'DISTANCE_EDUCATION', 'FIFTH', 3),
-('P3130', 5.0, 5, '2020-08-25 14:05:43'::timestamptz, 15, 'FULL_TIME_EDUCATION', 'SECOND', 4);
+('P3111', 5.5, 60, '2020-08-25 13:33:50'::timestamptz, 30, 'FULL_TIME_EDUCATION', 'SECOND', 1, 'john'),
+('P3112', 8.7, 90, '2017-08-25 12:20:10'::timestamptz, 24, 'EVENING_CLASSES', 'SEVENTH', 2, 'john'),
+('P3114', 5.2, 19, '2018-08-26 10:50:18'::timestamptz, 27, 'DISTANCE_EDUCATION', 'FIFTH', 3, 'john'),
+('P3130', 5.0, 5, '2020-08-25 14:05:43'::timestamptz, 15, 'FULL_TIME_EDUCATION', 'SECOND', 4, 'john');
