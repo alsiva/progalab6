@@ -46,7 +46,7 @@ public class Server {
 
         ForkJoinPool forkJoinPool = new ForkJoinPool();
         ReceiveRequestsAction receiveRequestsAction = new ReceiveRequestsAction(connectionManager, responseHandler);
-        forkJoinPool.submit(receiveRequestsAction);
+        forkJoinPool.invoke(receiveRequestsAction);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
