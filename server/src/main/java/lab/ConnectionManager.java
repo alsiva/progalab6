@@ -4,7 +4,6 @@ import lab.commands.Request;
 import lab.response.Response;
 
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -12,10 +11,8 @@ import java.nio.channels.DatagramChannel;
 public class ConnectionManager {
     private final DatagramChannel channel;
 
-    public ConnectionManager(int port) throws IOException {
-        //creates datagramChannel
-        channel = DatagramChannel.open();
-        channel.socket().bind(new InetSocketAddress(port));
+    public ConnectionManager(DatagramChannel channel) {
+        this.channel = channel;
     }
 
     public RequestFromClient receiveRequest() throws IOException, ClassNotFoundException {

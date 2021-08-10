@@ -1,12 +1,14 @@
 package lab;
 
 import lab.auth.AuthorizationControlManager;
-import lab.commands.Request;
-import lab.response.Response;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.nio.channels.DatagramChannel;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.concurrent.ForkJoinPool;
 
 public class Server {
     public static void main(String[] args) {
@@ -31,47 +33,41 @@ public class Server {
 
         ResponseHandler responseHandler = new ResponseHandler(administration, authorizationManager);
 
-        ConnectionManager connectionManager;
+        DatagramChannel channel;
         try {
-            connectionManager = new ConnectionManager(Constants.SERVICE_PORT);
+            channel = DatagramChannel.open();
+            channel.socket().bind(new InetSocketAddress(Constants.SERVICE_PORT));
         } catch (IOException e) {
-            System.err.println("Error creating connection: " + e.getMessage());
+            System.err.println("Error opening datagram channel or binding to " + Constants.SERVICE_PORT);
             return;
         }
 
+        ConnectionManager connectionManager = new ConnectionManager(channel);
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        ReceiveRequestsAction receiveRequestsAction = new ReceiveRequestsAction(connectionManager, responseHandler);
+        forkJoinPool.submit(receiveRequestsAction);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
-            System.out.println("Waiting for a packet from client");
-
-            ConnectionManager.RequestFromClient requestFromClient;
+            System.out.println("Please enter server command");
+            String command;
             try {
-                requestFromClient = connectionManager.receiveRequest();
-            } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Failed to receive command: " + e.getMessage());
-                System.out.println("Press enter to try again or write \"exit\" to terminate the program");
-
-                Scanner in = new Scanner(System.in);
-                String inputString = in.nextLine();
-
-                if (inputString.equals("exit")) {
-                    break;
-                } else {
-                    continue;
-                }
-            }
-
-            Response response;
-            try {
-                Request request = requestFromClient.getRequest();
-                response = responseHandler.getResponse(request.command, request.credentials);
-            } catch (ResponseHandler.CommandNotRecognizedException e) {
-                System.err.println("Command not recognized: " + e.getNotRecognizedCommand());
+                command = reader.readLine();
+            } catch (IOException e) {
+                System.err.println("Failed to read from input: " + e.getMessage());
                 continue;
             }
 
-            try {
-                connectionManager.sendResponse(response, requestFromClient.getSenderAddress());
-            } catch (IOException e) {
-                System.err.println("Failed to send response");
+            if (command.equalsIgnoreCase("exit")) {
+                try {
+                    channel.close();
+                } catch (IOException e) {
+                    break;
+                }
+                System.out.println("Waiting for requests to finish");
+                receiveRequestsAction.join();
+                break;
             }
         }
     }
