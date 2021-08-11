@@ -29,10 +29,13 @@ public class HandleRequestAction extends RecursiveAction {
             return;
         }
 
-        try {
-            connectionManager.sendResponse(response, requestFromClient.getSenderAddress());
-        } catch (IOException e) {
-            System.err.println("Failed to send response");
-        }
+        Thread sendResponseThread = new Thread(() -> {
+            try {
+                connectionManager.sendResponse(response, requestFromClient.getSenderAddress());
+            } catch (IOException e) {
+                System.err.println("Failed to send response");
+            }
+        });
+        sendResponseThread.start();
     }
 }
