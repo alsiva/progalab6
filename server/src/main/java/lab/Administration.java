@@ -5,6 +5,7 @@ import lab.domain.*;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 public class Administration {
     private Set<StudyGroup> groups;
     private final DatabaseManager databaseManager;
+    private final ReentrantLock locker = new ReentrantLock();
 
     public Administration(DatabaseManager databaseManager) throws SQLException {
         this.databaseManager = databaseManager;
@@ -24,11 +26,16 @@ public class Administration {
         long id;
         try {
             id = this.databaseManager.addGroup(studyGroup, creator);
+            locker.lock();
+            this.groups.add(studyGroup);
         } catch (SQLException e) {
             System.err.println("Failed to add group: " + e.getMessage());
             return Optional.empty();
+        } finally {
+            locker.unlock();
         }
-        this.groups.add(studyGroup);
+
+
 
         return Optional.of(id);
     }
@@ -63,6 +70,8 @@ public class Administration {
             if (!wasUpdated) {
                 return false;
             }
+
+            locker.lock();
             groups = groups.stream()
                     .map(studyGroup -> studyGroup == groupToUpdate
                             ? other
@@ -74,14 +83,16 @@ public class Administration {
         } catch (SQLException e) {
             System.err.println("Error while saving group to db: " + e.getMessage());
             return false;
+        } finally {
+            locker.unlock();
         }
 
     }
 
     /**
      * removes study group in collection by it's id
-     * @param id
-     * @param username
+     * @param id group id to remove
+     * @param username of user that performs operation
      * @return true if group was removed
      */
     public boolean removeById(long id, String username) throws NotAuthorizedException {
@@ -108,23 +119,30 @@ public class Administration {
             return false;
         }
 
+
+        locker.lock();
         groups = groups.stream()
                 .filter(studyGroup -> studyGroup != groupToRemove)
                 .collect(Collectors.toSet());
-
+        locker.unlock();
         return true;
     }
 
     /**
      * clears collection from all study groups
-     * @return
+     * @return number of affected rows
      */
     public int clear(String username) {
         try {
             int rowCount = databaseManager.clearStudyGroups(username);
 
             if (rowCount > 0) {
-                groups.clear();
+                locker.lock();
+                try {
+                    groups.clear();
+                } finally {
+                    locker.unlock();
+                }
             }
             return rowCount;
         } catch (SQLException e) {
@@ -153,14 +171,16 @@ public class Administration {
             return false;
         }
 
+        locker.lock();
         groups.add(other);
+        locker.unlock();
         return true;
     }
 
     /**
      * removes all study groups that have lower students count than old one
      * @param other study group
-     * @param creator
+     * @param creator user that invokes this command
      * @return true if element was removed
      */
     public Set<StudyGroup> removeLower(StudyGroup other, String creator) {
@@ -171,7 +191,7 @@ public class Administration {
      * removes study group that student count is equal to count in params
      */
     public Set<StudyGroup> removeAllByStudentsCount(long count, String creator) {
-        return this.removeGroups(studyGroup -> studyGroup.getStudentsCount() == count && creator.equals(studyGroup.getCreator()));
+        return removeGroups(studyGroup -> studyGroup.getStudentsCount() == count && creator.equals(studyGroup.getCreator()));
     }
 
     private Set<StudyGroup> removeGroups(Predicate<StudyGroup> condition) {
@@ -192,7 +212,10 @@ public class Administration {
             return Collections.emptySet();
         }
 
+        locker.lock();
         groups.removeAll(groupsToRemove);
+        locker.unlock();
+
         return groupsToRemove;
 
     }
