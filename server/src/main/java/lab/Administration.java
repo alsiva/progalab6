@@ -225,7 +225,9 @@ public class Administration {
      * @return count
      */
     public long countByGroupAdmin(Person groupAdmin) {
-        return groups.stream().filter(studyGroup -> studyGroup.getGroupAdmin().equals(groupAdmin)).count();
+        return groupAdmin == null
+                ? 0
+                : groups.stream().filter(studyGroup -> groupAdmin.equals(studyGroup.getGroupAdmin())).count();
     }
 
     /**
