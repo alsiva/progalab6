@@ -8,20 +8,19 @@ import java.util.Date;
 import java.util.*;
 
 public class DatabaseManager {
-    private final String username;
-    private final String password;
+    private final Configuration configuration;
 
-    public DatabaseManager(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public DatabaseManager(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     private Connection connect() throws SQLException {
         Properties props = new Properties();
-        props.put("user", username);
-        props.put("password", password);
+        props.put("user", configuration.username);
+        props.put("password", configuration.password);
 
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/studs", props);
+        String url = "jdbc:postgresql://" + configuration.host + ":" + configuration.port + "/" + configuration.database;
+        return DriverManager.getConnection(url, props);
     }
 
     public void createNewUser(String username, String hashedPassword) throws SQLException {
