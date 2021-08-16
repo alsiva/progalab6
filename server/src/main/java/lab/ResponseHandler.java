@@ -48,8 +48,8 @@ public class ResponseHandler {
 
         }
         if (command instanceof AddCommand) {
-            Optional<Long> id = administration.add(((AddCommand) command).getGroup(), credentials.username);
-            return new AddResponse(id);
+            Optional<Long> optionalId = administration.add(((AddCommand) command).getGroup(), credentials.username);
+            return new AddResponse(optionalId.orElse(null));
 
         }
         if (command instanceof UpdateIdCommand) {
