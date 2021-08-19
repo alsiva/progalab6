@@ -9,6 +9,7 @@ import lab.auth.AuthorizationManager;
 import lab.auth.Credentials;
 import lab.commands.*;
 import lab.response.Response;
+import lab.ui.LoginController;
 
 import java.io.IOException;
 import java.net.PortUnreachableException;
@@ -17,16 +18,12 @@ import java.util.Optional;
 public class Client extends Application {
     private static final CommandManager commandManager = new CommandManager();
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/LoginScene.fxml"));
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
-    }
-
     public static void main(String[] args) {
         launch(args);
+    }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
         ConnectionManagerClient connectionManager;
         try {
             connectionManager = new ConnectionManagerClient(Constants.SERVICE_PORT);
@@ -39,7 +36,16 @@ public class Client extends Application {
         AuthorizationManager authorizationManager = new AuthorizationManager();
         ResponseHandlerClient responseHandler = new ResponseHandlerClient(authorizationManager);
 
-        while (true) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LoginScene.fxml"));
+        Parent root = fxmlLoader.load();
+        LoginController controller = fxmlLoader.getController();
+
+        controller.setPrimaryStage(primaryStage);
+        controller.setConnectionManager(connectionManager);
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+
+        /*while (true) {
             Command command;
             try {
                 System.out.println(authorizationManager.isAuthorized()
@@ -105,6 +111,6 @@ public class Client extends Application {
             }
 
             responseHandler.handleResponse(response);
-        }
+        }*/
     }
 }

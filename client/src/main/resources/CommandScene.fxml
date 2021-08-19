@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="344.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
+   <children>
+      <HBox alignment="CENTER_LEFT" layoutX="19.0" layoutY="12.0" prefHeight="36.0" prefWidth="553.0">
+         <children>
+            <Label prefHeight="38.0" prefWidth="109.0" text="Hi!">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Button onAction="#logOut" alignment="CENTER" mnemonicParsing="false" prefHeight="10.0" prefWidth="77.0" text="Log out" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

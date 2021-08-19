@@ -21,29 +21,7 @@ public class ResponseHandlerClient {
     }
 
     public void handleResponse(Response response) {
-        if (response instanceof AuthorizationFailedResponse) {
-            AuthorizationFailedResponse authorizationFailedResponse = (AuthorizationFailedResponse) response;
-            System.out.println("Problem with authorization invoking this command: " + authorizationFailedResponse.getCommand().toPrint());
-
-            Optional<Credentials> currentCredentials = authorizationManager.getCredentials();
-            if (currentCredentials.isPresent()) {
-                Credentials failedResponseCredentials = authorizationFailedResponse.getCredentials();
-                if (failedResponseCredentials.equals(currentCredentials.get())) {
-                    authorizationManager.logout();
-                    System.out.println("User " + failedResponseCredentials.username + " was logged out");
-                }
-            }
-        } else if (response instanceof CheckCredentialsResponse) {
-            CheckCredentialsResponse checkCredentialsResponse = (CheckCredentialsResponse) response;
-            Credentials credentials = checkCredentialsResponse.getCredentials();
-
-            if (checkCredentialsResponse.isAuthorized()) {
-                System.out.println("Logged in as " + credentials.username);
-                authorizationManager.authorize(credentials);
-            } else {
-                System.out.println("Failed to authorize " + credentials.username + " with password " + credentials.password);
-            }
-        } else if (response instanceof CantModifyResponse) {
+        if (response instanceof CantModifyResponse) {
             long studyGroupId = ((CantModifyResponse) response).getStudyGroupId();
             System.out.println("You're not allowed to modify group #" + studyGroupId + ". You are not the group creator.");
 
