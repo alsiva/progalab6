@@ -3,21 +3,21 @@ package lab.auth;
 import java.util.Optional;
 
 public class AuthorizationManager {
-    private Optional<Credentials> credentials = Optional.empty();
+    private Credentials credentials = null;
 
     public boolean isAuthorized() {
-        return credentials.isPresent();
+        return credentials != null;
     }
 
     public void authorize(Credentials credentials) {
-        this.credentials = Optional.of(credentials);
+        this.credentials = credentials;
     }
 
     public Optional<Credentials> getCredentials() {
-        return credentials;
+        return Optional.ofNullable(credentials);
     }
 
     public void logout() {
-        credentials = Optional.empty();
+        credentials = null;
     }
 }
