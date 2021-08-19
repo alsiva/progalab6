@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="344.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="lab.ui.LoginController">
+    <Label layoutX="155.0" layoutY="35.0" text="Входная панель">
+        <font>
+            <Font size="40.0" />
+        </font>
+    </Label>
+   <VBox layoutX="160.0" layoutY="123.0" prefHeight="200.0" prefWidth="300.0">
+      <children>
+         <TextField fx:id="usernameField" promptText="username" />
+         <PasswordField fx:id="passwordField" promptText="password" />
+         <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="300.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#logIn" prefHeight="25.0" prefWidth="150.0" text="Log in" HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="150.0" text="Register" HBox.hgrow="ALWAYS" />
+            </children>
+         </HBox>
+      </children>
+   </VBox>
+</AnchorPane>

@@ -1,19 +1,32 @@
 package lab;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import lab.auth.AuthorizationManager;
 import lab.auth.Credentials;
 import lab.commands.*;
 import lab.response.Response;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.PortUnreachableException;
 import java.util.Optional;
 
-public class Client {
+public class Client extends Application {
     private static final CommandManager commandManager = new CommandManager();
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/LoginScene.fxml"));
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
 
     public static void main(String[] args) {
+        launch(args);
+
         ConnectionManagerClient connectionManager;
         try {
             connectionManager = new ConnectionManagerClient(Constants.SERVICE_PORT);
