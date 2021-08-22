@@ -45,7 +45,10 @@ public class Client extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        /*while (true) {
+
+
+/*
+        while (true) {
             Command command;
             try {
                 System.out.println(authorizationManager.isAuthorized()
@@ -111,6 +114,8 @@ public class Client extends Application {
             }
 
             responseHandler.handleResponse(response);
-        }*/
+        }
+
+ */
     }
 }

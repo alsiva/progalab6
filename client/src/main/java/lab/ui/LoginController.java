@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -35,28 +36,51 @@ public class LoginController {
     @FXML
     PasswordField passwordField;
 
-    public void logIn() throws IOException, ClassNotFoundException {
+    @FXML
+    Label errorLabel;
+
+    public void clearError() {
+        errorLabel.setText("");
+    }
+
+    public void logIn() throws IOException {
         Credentials credentials = getCredentials();
         CheckCredentialsCommand loginCommand = new CheckCredentialsCommand(credentials);
-        connectionManager.sendRequest(new Request(loginCommand, credentials));
-        Response response = connectionManager.receiveResponse();
-
-        if (response instanceof CheckCredentialsResponse) {
-            CheckCredentialsResponse checkCredentialsResponse = (CheckCredentialsResponse) response;
-
-            if (checkCredentialsResponse.isAuthorized()) {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/CommandScene.fxml"));
-                Parent root = fxmlLoader.load();
-                CommandController controller = fxmlLoader.getController();
-
-                controller.setCredentials(credentials);
-                primaryStage.setScene(new Scene(root));
-                primaryStage.show();
-
-            } else {
-                // todo: display error message in ui
-            }
+        try {
+            connectionManager.sendRequest(new Request(loginCommand, credentials));
+        } catch (Exception e) {
+            errorLabel.setText("Failed to send request to server");
         }
+
+        Response response;
+        try {
+            response = connectionManager.receiveResponse();
+        } catch (Exception e) {
+            errorLabel.setText("Failed to login, did you start server?");
+            return;
+        }
+
+
+        if (!(response instanceof CheckCredentialsResponse)) {
+            errorLabel.setText("Unknown response from server");
+            return;
+        }
+
+        CheckCredentialsResponse checkCredentialsResponse = (CheckCredentialsResponse) response;
+
+        if (!checkCredentialsResponse.isAuthorized()) {
+            errorLabel.setText("Wrong credentials");
+            return;
+        }
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/CommandScene.fxml"));
+        Parent root = fxmlLoader.load();
+        CommandController controller = fxmlLoader.getController();
+
+        controller.setCredentials(credentials);
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+
     }
 
     private Credentials getCredentials() {

@@ -13,7 +13,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Button onAction="#logOut" alignment="CENTER" mnemonicParsing="false" prefHeight="10.0" prefWidth="77.0" text="Log out" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out" />
          </children>
       </HBox>
    </children>
