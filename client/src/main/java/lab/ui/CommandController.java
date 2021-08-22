@@ -6,6 +6,7 @@ import lab.auth.Credentials;
 import lab.commands.ClearCommand;
 import lab.commands.Command;
 import lab.commands.Request;
+import lab.response.ClearResponse;
 import lab.response.Response;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class CommandController {
         this.credentials = credentials;
     }
 
-    public void clear() {
+    public void clear() throws IOException {
         Command command = new ClearCommand();
         try {
             connectionManager.sendRequest(new Request(command, credentials));
@@ -33,16 +34,23 @@ public class CommandController {
             System.err.println("Failed to send command " + e.getMessage());
         }
 
+        Response response;
         try {
-            Response response = connectionManager.receiveResponse();
+            response = connectionManager.receiveResponse();
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Failed to receive response " + e.getMessage());
+            Pages.showModal(primaryStage.getOwner(), "Failed to get response from server");
+            return;
         }
 
-        Stage answer = new Stage();
-        answer.initModality(Modality.APPLICATION_MODAL);
-        answer.showAndWait();
+        if (!(response instanceof ClearResponse)) {
+            Pages.showModal(primaryStage.getOwner(), "Unknown command from server");
+            return;
+        }
 
+        int removedCount = ((ClearResponse) response).getElementsRemovedCount();
+        String message = "Collection was cleared; " + removedCount + " elements were removed";
+
+        Pages.showModal(primaryStage, message);
     }
 
     public void logOut() throws IOException {

@@ -78,9 +78,6 @@ public class ResponseHandlerClient {
             } else {
                 System.out.println("Nothing was removed");
             }
-        } else if (response instanceof ClearResponse) {
-            int removedCount = ((ClearResponse) response).getElementsRemovedCount();
-            System.out.println("Collection was cleared; " + removedCount + " elements were removed");
         } else if (response instanceof AddIfMinResponse) {
             Boolean wasAdded = ((AddIfMinResponse) response).getWasAdded();
             if (wasAdded) {

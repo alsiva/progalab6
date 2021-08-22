@@ -3,7 +3,10 @@ package lab.ui;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
 
@@ -36,5 +39,18 @@ public class Pages {
             controller.setConnectionManager(connectionManager);
             controller.setCredentials(credentials);
         });
+    }
+
+    public static void showModal(Window owner, String message) throws IOException {
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(Pages.class.getResource("/InfoMessage.fxml"));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Info");
+        Label label = (Label) root.lookup("#infoLabel");
+        label.setText(message);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(owner);
+        stage.show();
     }
 }
