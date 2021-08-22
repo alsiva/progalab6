@@ -1,13 +1,11 @@
 package lab.ui;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import lab.CommandManager;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
 import lab.commands.CheckCredentialsCommand;
@@ -21,14 +19,20 @@ import java.io.IOException;
 public class LoginController {
     private Stage primaryStage;
     private ConnectionManagerClient connectionManager;
+    private CommandManager commandManager;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    public void setCommandManager(CommandManager commandManager) {
+        this.commandManager = commandManager;
+    }
+
     public void setConnectionManager(ConnectionManagerClient connectionManager) {
         this.connectionManager = connectionManager;
     }
+
 
     @FXML
     TextField usernameField;
@@ -73,13 +77,7 @@ public class LoginController {
             return;
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/CommandScene.fxml"));
-        Parent root = fxmlLoader.load();
-        CommandController controller = fxmlLoader.getController();
-
-        controller.setCredentials(credentials);
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
+        Pages.openCommandsPage(primaryStage, connectionManager, credentials);
 
     }
 

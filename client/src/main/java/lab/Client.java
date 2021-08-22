@@ -1,19 +1,11 @@
 package lab;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lab.auth.AuthorizationManager;
-import lab.auth.Credentials;
-import lab.commands.*;
-import lab.response.Response;
-import lab.ui.LoginController;
+import lab.ui.Pages;
 
 import java.io.IOException;
-import java.net.PortUnreachableException;
-import java.util.Optional;
 
 public class Client extends Application {
     private static final CommandManager commandManager = new CommandManager();
@@ -36,16 +28,7 @@ public class Client extends Application {
         AuthorizationManager authorizationManager = new AuthorizationManager();
         ResponseHandlerClient responseHandler = new ResponseHandlerClient(authorizationManager);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/LoginScene.fxml"));
-        Parent root = fxmlLoader.load();
-        LoginController controller = fxmlLoader.getController();
-
-        controller.setPrimaryStage(primaryStage);
-        controller.setConnectionManager(connectionManager);
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
-
-
+        Pages.openLoginPage(primaryStage, connectionManager);
 
 /*
         while (true) {
@@ -118,4 +101,6 @@ public class Client extends Application {
 
  */
     }
+
+
 }
