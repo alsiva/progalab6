@@ -60,4 +60,8 @@ public class PrintRepresentation {
     public String toPrint(Instant creationDate) {
         return instantFormatter.format(creationDate);
     }
+
+    public static class Factory {
+        public static final PrintRepresentation singleton = new PrintRepresentation();
+    }
 }

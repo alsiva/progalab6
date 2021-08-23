@@ -70,16 +70,6 @@ public class CommandReader {
         if (command.equals(UPDATE)) {
             return new UpdateIdCommand(readStudyGroupWithId());
         }
-        if (command.startsWith(REMOVE_BY_ID)) {
-            String idAsStr = command.substring(REMOVE_BY_ID.length()).trim();
-            long id;
-            try {
-                id = Long.parseLong(idAsStr);
-            } catch (NumberFormatException e) {
-                throw new IOException("Illegal argument for remove_by_id: " + idAsStr + " is not a long", e);
-            }
-            return new RemoveByIdCommand(id);
-        }
         if (command.equals(CLEAR)) {
             return new ClearCommand();
         }

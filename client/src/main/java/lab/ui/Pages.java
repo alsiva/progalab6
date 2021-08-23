@@ -9,8 +9,11 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
+import lab.domain.StudyGroup;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Pages {
@@ -41,16 +44,31 @@ public class Pages {
         });
     }
 
-    public static void showModal(Window owner, String message) throws IOException {
+    private static <T> void openModal(Window owner, String pageResourcePath, String title, BiConsumer<? super Parent, ? super T> setup) throws IOException {
         Stage stage = new Stage();
-        Parent root = FXMLLoader.load(Pages.class.getResource("/InfoMessage.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Pages.class.getResource(pageResourcePath));
+        Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setTitle("Info");
-        Label label = (Label) root.lookup("#infoLabel");
-        label.setText(message);
+        stage.setTitle(title);
+
+        setup.accept(root, fxmlLoader.<T>getController());
+
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(owner);
         stage.show();
+    }
+
+    public static void openInfoModal(Window owner, String message) throws IOException {
+        openModal(owner, "/InfoMessage.fxml", "Info", (root, controller) -> {
+            Label label = (Label) root.lookup("#infoLabel");
+            label.setText(message);
+        });
+    }
+
+    public static void openStudyGroupsModal(Window owner, List<StudyGroup> groups) throws IOException {
+        openModal(owner, "/StudyGroupScene.fxml", "Info", (Parent root, StudyGroupController controller) -> {
+            controller.setStudyGroups(groups);
+        });
     }
 }
