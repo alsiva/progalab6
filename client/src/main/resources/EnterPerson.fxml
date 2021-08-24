@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.EnterPersonController">
+   <children>
+      <VBox spacing="8.0">
+         <children>
+            <Label text="Group Admin">
+               <padding>
+                  <Insets left="8.0" top="8.0" />
+               </padding></Label>
+            <TextField fx:id="personName" promptText="name" />
+            <DatePicker fx:id="birthdayPicker" promptText="birthday" />
+            <TextField fx:id="passport" promptText="passportId" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </VBox>
+      <fx:include fx:id="enterLocation" source="EnterLocation.fxml" />
+   </children>
+</VBox>

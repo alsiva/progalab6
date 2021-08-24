@@ -1,58 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="525.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
-   <children>
-      <HBox alignment="CENTER_LEFT" layoutX="19.0" layoutY="12.0" prefHeight="36.0" prefWidth="553.0">
-         <children>
-            <Label prefHeight="38.0" prefWidth="109.0" text="Hi!">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out" />
-            <Button layoutX="50.0" layoutY="74.0" mnemonicParsing="false" onAction="#clear" text="Clear" />
-            <Button mnemonicParsing="false" onAction="#help" text="Help" />
-            <Button mnemonicParsing="false" onAction="#info" text="Info" />
-            <Button mnemonicParsing="false" onAction="#add" text="Add" />
-            <Button mnemonicParsing="false" onAction="#show" text="Show" />
-         </children>
-      </HBox>
-      <TitledPane animated="false" layoutX="19.0" layoutY="77.0" prefHeight="106.0" prefWidth="200.0" text="Remove by id">
-         <content>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <TextField fx:id="removeByIdIdField" prefHeight="25.0" prefWidth="115.0" promptText="id" />
-                  <Button mnemonicParsing="false" onAction="#removeById" prefHeight="25.0" prefWidth="63.0" text="Remove" />
-               </children>
-            </HBox>
-         </content>
-      </TitledPane>
-      <TitledPane animated="false" layoutX="260.0" layoutY="75.0" prefHeight="106.0" prefWidth="202.0" text="FilterLessThanSemesterEnum">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <ChoiceBox fx:id="filterLessThenSemesterChoiceBox" prefHeight="25.0" prefWidth="142.0" />
-                        <Button mnemonicParsing="false" onAction="#filterLessThanSemesterEnum" prefHeight="25.0" prefWidth="67.0" text="Filter" />
-                     </children>
-                  </HBox>
-               </children>
-            </AnchorPane>
-        </content>
-      </TitledPane>
-      <TitledPane animated="false" layoutX="18.0" layoutY="216.0" prefHeight="106.0" prefWidth="202.0" text="RemoveAllByStudentsCount">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="177.0" prefWidth="200.0">
-               <children>
-                  <TextField fx:id="removeAllByStudentsCountField" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="109.0" promptText="count" />
-                  <Button layoutX="123.0" layoutY="29.0" mnemonicParsing="false" onAction="#removeAllByStudentsCount" text="Remove" />
-               </children></AnchorPane>
-        </content>
-      </TitledPane>
-   </children>
+<AnchorPane prefHeight="642.0" prefWidth="777.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
+    <children>
+        <HBox alignment="CENTER_LEFT" layoutX="19.0" layoutY="12.0" prefHeight="36.0" prefWidth="553.0">
+            <children>
+                <Label prefHeight="38.0" prefWidth="109.0" text="Hi!">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out" />
+                <Button mnemonicParsing="false" onAction="#help" text="Help" />
+                <Button mnemonicParsing="false" onAction="#add" text="Add" />
+            </children>
+        </HBox>
+
+        <TabPane layoutX="19.0" layoutY="66.0" prefHeight="361.0" prefWidth="735.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Simple commands">
+                    <content>
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="56.0" text="Clear" />
+                                <Button mnemonicParsing="false" onAction="#info" prefHeight="25.0" prefWidth="54.0" text="Info" />
+                                <Button mnemonicParsing="false" onAction="#show" prefHeight="25.0" prefWidth="56.0" text="Show" />
+                            </children>
+                            <padding>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            </padding>
+                        </HBox>
+                    </content>
+                </Tab>
+                <Tab text="Remove study group">
+                    <content>
+                        <VBox prefWidth="200.0">
+                            <HBox spacing="8.0">
+                                <children>
+                                    <Label prefHeight="25.0" prefWidth="112.0" text="by id" textAlignment="RIGHT" />
+                                    <TextField fx:id="removeByIdIdField" prefHeight="25.0" prefWidth="115.0" promptText="study group id" />
+                                    <Button mnemonicParsing="false" onAction="#removeById" prefHeight="25.0" prefWidth="63.0" text="Remove" />
+
+                                </children>
+                                <padding>
+                                    <Insets bottom="4.0" left="8.0" right="8.0" top="12.0" />
+                                </padding>
+                            </HBox>
+                            <HBox spacing="8.0">
+                                <children>
+                                    <Label prefHeight="25.0" prefWidth="112.0" text="by student count" textAlignment="RIGHT" />
+                                    <TextField fx:id="removeAllByStudentsCountField" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="115.0" promptText="count" />
+                                    <Button layoutX="123.0" layoutY="29.0" mnemonicParsing="false" onAction="#removeAllByStudentsCount" prefHeight="25.0" prefWidth="63.0" text="Remove" />
+                                </children>
+                                <padding>
+                                    <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+                                </padding>
+                            </HBox>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Filter">
+                    <content>
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
+                            <children>
+                        <Label prefHeight="25.0" prefWidth="220.0" text="Show groups having lesser semester then" />
+                                <ChoiceBox fx:id="filterLessThenSemesterChoiceBox" prefHeight="25.0" prefWidth="142.0" />
+                                <Button mnemonicParsing="false" onAction="#filterLessThanSemesterEnum" prefHeight="25.0" prefWidth="67.0" text="Filter" />
+
+                            </children>
+                            <padding>
+                                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                            </padding>
+                        </HBox>
+                    </content>
+                </Tab>
+                <Tab text="Study group commands">
+                    <content>
+                        <VBox>
+                            <children>
+                                <fx:include fx:id="enterStudyGroup" source="EnterStudyGroup.fxml" />
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <Button mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="130.0" text="Add" />
+                                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="138.0" text="Remove lower" />
+                                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="158.0" text="Add if min" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
 </AnchorPane>

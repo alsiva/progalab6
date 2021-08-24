@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.EnterLocationController">
+   <children>
+      <Label text="Location">
+         <padding>
+            <Insets left="8.0" top="8.0" />
+         </padding></Label>
+      <TextField fx:id="name" promptText="location name" />
+      <TextField fx:id="x" promptText="X" />
+      <TextField fx:id="y" promptText="Y" />
+   </children>
+</VBox>

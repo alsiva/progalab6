@@ -1,18 +1,28 @@
 package lab.ui;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lab.CommandReader;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
 import lab.commands.*;
+import lab.domain.FailedToParseException;
 import lab.domain.PrintRepresentation;
 import lab.domain.Semester;
 import lab.domain.StudyGroup;
 import lab.response.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CommandController extends AbstractCommandController {
@@ -66,8 +76,21 @@ public class CommandController extends AbstractCommandController {
         Pages.openStudyGroupsModal(primaryStage, studyGroups);
     }
 
+    @FXML
+    public Node enterStudyGroup;
+    @FXML
+    public EnterStudyGroupController enterStudyGroupController;
+
     public void add() throws IOException {
-         Pages.openEnterGroupPage(primaryStage, connectionManager, credentials);
+        StudyGroup group;
+        try {
+            group = enterStudyGroupController.getGroup();
+        } catch (FailedToParseException e) {
+            Pages.openInfoModal(primaryStage, e.getMessage());
+            return;
+        }
+
+        Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
     }
 
     public void updateId() {
