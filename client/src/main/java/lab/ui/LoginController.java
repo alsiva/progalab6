@@ -19,15 +19,11 @@ import java.io.IOException;
 public class LoginController {
     private Stage primaryStage;
     private ConnectionManagerClient connectionManager;
-    private CommandManager commandManager;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    public void setCommandManager(CommandManager commandManager) {
-        this.commandManager = commandManager;
-    }
 
     public void setConnectionManager(ConnectionManagerClient connectionManager) {
         this.connectionManager = connectionManager;

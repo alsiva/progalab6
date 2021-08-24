@@ -15,10 +15,7 @@ import lab.response.*;
 import java.io.IOException;
 import java.util.List;
 
-public class CommandController {
-    private Credentials credentials;
-    private ConnectionManagerClient connectionManager;
-    private Stage primaryStage;
+public class CommandController extends AbstractCommandController {
 
     @FXML
     public void initialize() {
@@ -70,7 +67,7 @@ public class CommandController {
     }
 
     public void add() throws IOException {
-         Pages.openEnterGroupPage(primaryStage, connectionManager);
+         Pages.openEnterGroupPage(primaryStage, connectionManager, credentials);
     }
 
     public void updateId() {
@@ -175,23 +172,6 @@ public class CommandController {
 
         List<StudyGroup> studyGroupWithLessSemester = ((FilterLessThanSemesterEnumResponse) response).getStudyGroupWithLessSemester();
         Pages.openStudyGroupsModal(primaryStage, studyGroupWithLessSemester);
-    }
-
-    private Response getResponse(Command command) throws IOException {
-        try {
-            connectionManager.sendRequest(new Request(command, credentials));
-        } catch (IOException e) {
-            System.err.println("Failed to send command " + e.getMessage());
-        }
-
-        Response response;
-        try {
-            response = connectionManager.receiveResponse();
-            return response;
-        } catch (IOException | ClassNotFoundException e) {
-            Pages.openInfoModal(primaryStage, "Failed to get response from server");
-            return null;
-        }
     }
 
     public void logOut() throws IOException {

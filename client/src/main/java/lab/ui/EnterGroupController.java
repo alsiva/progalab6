@@ -5,13 +5,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lab.ConnectionManagerClient;
+import lab.commands.AddCommand;
 import lab.domain.*;
+import lab.response.AddResponse;
+import lab.response.Response;
+
+import java.io.IOException;
 import java.util.Date;
 
-public class EnterGroupController {
-    private Stage primaryStage;
-    private ConnectionManagerClient connectionManager;
-
+public class EnterGroupController extends AbstractCommandController {
 
     //todo catch Exceptions with incorrect user data
     @FXML
@@ -37,10 +39,16 @@ public class EnterGroupController {
         semester.setValue(Semester.SECOND);
     }
 
-    public void add() throws FailedToParseException {
-        StudyGroup studyGroup = readStudyGroup();
+    public void add() throws FailedToParseException, IOException {
+        Response response = getResponse(new AddCommand(readStudyGroup()));
 
+        if (!(response instanceof AddResponse)) {
+            return;
+        }
+
+        Pages.openInfoModal(primaryStage, "Группа была добавлена успешна");
     }
+
 
     private StudyGroup readStudyGroup() throws FailedToParseException {
         String nameField = name.getText();
