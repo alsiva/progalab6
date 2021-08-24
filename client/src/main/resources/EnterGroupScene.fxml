@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.EnterGroupController">
+   <children>
+      <Button fx:id="add" layoutX="281.0" layoutY="320.0" mnemonicParsing="false" text="add" />
+      <TextField fx:id="name" layoutX="44.0" layoutY="45.0" promptText="name" />
+      <TextField fx:id="studentsCount" layoutX="44.0" layoutY="71.0" promptText="StudentsCount" />
+      <TextField fx:id="coordinatesX" layoutX="300.0" layoutY="58.0" promptText="x" />
+      <TextField fx:id="coordinatesY" layoutX="300.0" layoutY="83.0" promptText="y" />
+      <Label layoutX="353.0" layoutY="28.0" text="Coordinates" />
+      <ComboBox fx:id="formOfEducation" layoutX="44.0" layoutY="96.0" prefWidth="150.0" promptText="FormOfEducation" />
+      <ComboBox fx:id="semester" layoutX="44.0" layoutY="121.0" prefWidth="150.0" promptText="Semester" />
+   </children>
+</AnchorPane>

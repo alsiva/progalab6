@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="344.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
+<AnchorPane prefHeight="525.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
    <children>
       <HBox alignment="CENTER_LEFT" layoutX="19.0" layoutY="12.0" prefHeight="36.0" prefWidth="553.0">
          <children>
@@ -17,6 +17,8 @@
             <Button layoutX="50.0" layoutY="74.0" mnemonicParsing="false" onAction="#clear" text="Clear" />
             <Button mnemonicParsing="false" onAction="#help" text="Help" />
             <Button mnemonicParsing="false" onAction="#info" text="Info" />
+            <Button mnemonicParsing="false" onAction="#add" text="Add" />
+            <Button mnemonicParsing="false" onAction="#show" text="Show" />
          </children>
       </HBox>
       <TitledPane animated="false" layoutX="19.0" layoutY="77.0" prefHeight="106.0" prefWidth="200.0" text="Remove by id">
@@ -36,11 +38,20 @@
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <ChoiceBox fx:id="filterLessThenSemesterChoiceBox" prefHeight="25.0" prefWidth="142.0" />
-                        <Button onAction="#filterLessThanSemesterEnum" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Filter" />
+                        <Button mnemonicParsing="false" onAction="#filterLessThanSemesterEnum" prefHeight="25.0" prefWidth="67.0" text="Filter" />
                      </children>
                   </HBox>
                </children>
             </AnchorPane>
+        </content>
+      </TitledPane>
+      <TitledPane animated="false" layoutX="18.0" layoutY="216.0" prefHeight="106.0" prefWidth="202.0" text="RemoveAllByStudentsCount">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="177.0" prefWidth="200.0">
+               <children>
+                  <TextField fx:id="removeAllByStudentsCountField" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="109.0" promptText="count" />
+                  <Button layoutX="123.0" layoutY="29.0" mnemonicParsing="false" onAction="#removeAllByStudentsCount" text="Remove" />
+               </children></AnchorPane>
         </content>
       </TitledPane>
    </children>

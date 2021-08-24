@@ -6,8 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import lab.domain.StudyGroup;
+import lab.domain.*;
 
+import java.util.Date;
 import java.util.List;
 
 public class StudyGroupController {
@@ -17,12 +18,32 @@ public class StudyGroupController {
     public void setStudyGroups(List<StudyGroup> items) {
         final ObservableList<StudyGroup> data = FXCollections.observableArrayList(items);
 
-        TableColumn nameCol = new TableColumn<StudyGroup, String>("name");
-        nameCol.setCellValueFactory(
-             new PropertyValueFactory<StudyGroup,String>("name")
-        );
+        TableColumn<StudyGroup, String> nameCol = new TableColumn<>("name");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        studyGroupTable.getColumns().addAll(nameCol);
+        TableColumn<StudyGroup, Coordinates> coordinatesCol = new TableColumn<>("coordinates");
+        coordinatesCol.setCellValueFactory(new PropertyValueFactory<>("coordinates"));
+
+        TableColumn<StudyGroup, Date> creationDateCol = new TableColumn<>("creationDate");
+        creationDateCol.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
+
+        TableColumn<StudyGroup, Integer> studentsCountCol = new TableColumn<>("studentsCount");
+        studentsCountCol.setCellValueFactory(new PropertyValueFactory<>("studentsCount"));
+
+        TableColumn<StudyGroup, FormOfEducation> formOfEducationCol = new TableColumn<>("formOfEducation");
+        formOfEducationCol.setCellValueFactory(new PropertyValueFactory<>("formOfEducation"));
+
+        TableColumn<StudyGroup, Semester> semesterCol = new TableColumn<>("semesterEnum");
+        semesterCol.setCellValueFactory(new PropertyValueFactory<>("semesterEnum"));
+
+        TableColumn<StudyGroup, Person> groupAdminCol = new TableColumn<>("groupAdmin");
+        groupAdminCol.setCellValueFactory(new PropertyValueFactory<>("groupAdmin"));
+
+        TableColumn<StudyGroup, String> creatorCol = new TableColumn<>("creator");
+        creatorCol.setCellValueFactory(new PropertyValueFactory<>("creator"));
+
+        //noinspection unchecked
+        studyGroupTable.getColumns().addAll(nameCol, coordinatesCol,creationDateCol, studentsCountCol, formOfEducationCol, semesterCol, groupAdminCol, creatorCol);
         studyGroupTable.setItems(data);
     }
 }

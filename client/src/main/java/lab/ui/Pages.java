@@ -44,6 +44,13 @@ public class Pages {
         });
     }
 
+    public static void openEnterGroupPage(Stage primaryStage, ConnectionManagerClient connectionManager) throws IOException {
+        openPage(primaryStage, "/EnterGroupScene.fxml", (EnterGroupController controller) -> {
+            controller.setPrimaryStage(primaryStage);
+            controller.setConnectionManager(connectionManager);
+        });
+    }
+
     private static <T> void openModal(Window owner, String pageResourcePath, String title, BiConsumer<? super Parent, ? super T> setup) throws IOException {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Pages.class.getResource(pageResourcePath));

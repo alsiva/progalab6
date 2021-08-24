@@ -59,12 +59,18 @@ public class CommandController {
         Pages.openInfoModal(primaryStage, message);
     }
 
-    public void show() {
+    public void show() throws IOException {
+        Response response = getResponse(new ShowCommand());
+        if (!(response instanceof ShowResponse)) {
+            return;
+        }
 
+        List<StudyGroup> studyGroups = ((ShowResponse) response).getGroups();
+        Pages.openStudyGroupsModal(primaryStage, studyGroups);
     }
 
-    public void add() {
-
+    public void add() throws IOException {
+         Pages.openEnterGroupPage(primaryStage, connectionManager);
     }
 
     public void updateId() {
@@ -124,12 +130,31 @@ public class CommandController {
 
     }
 
-    public void history() {
+    @FXML
+    TextField removeAllByStudentsCountField;
 
-    }
+    public void removeAllByStudentsCount() throws IOException {
+        String countAsString = removeAllByStudentsCountField.getText().trim();
+        long count;
+        try {
+            count = Long.parseLong(countAsString);
+        } catch (NumberFormatException e) {
+            // display error
+            Pages.openInfoModal(primaryStage, countAsString + " is not long");
+            return;
+        }
 
-    public void removeAllByStudentsCount() {
+        RemoveAllByStudentsCountCommand removeAllByStudentsCountCommand = new RemoveAllByStudentsCountCommand(count);
 
+        Response response = getResponse(removeAllByStudentsCountCommand);
+
+        if (!(response instanceof RemoveAllByStudentsCountResponse)) {
+            Pages.openInfoModal(primaryStage, "Unknown command from server");
+            return;
+        }
+
+        List<StudyGroup> removedGroups = ((RemoveAllByStudentsCountResponse) response).getRemovedGroups();
+        Pages.openStudyGroupsModal(primaryStage, removedGroups);
     }
 
     public void countByGroupAdmin() {
