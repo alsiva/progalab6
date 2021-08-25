@@ -3,6 +3,7 @@ package lab.domain;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.function.Function;
 
 /**
  * Class that defines study group
@@ -83,15 +84,40 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
     }
 
     public String getAdminName() {
-        return groupAdmin.getName();
+        return getGroupAdminField(Person::getName);
     }
 
     public LocalDate getAdminBirthday() {
-        return  groupAdmin.getBirthday();
+        return getGroupAdminField(Person::getBirthday);
     }
 
-    public String getPassportId() {
-        return  groupAdmin.getPassportID();
+    public String getAdminPassportId() {
+        return getGroupAdminField(Person::getPassportID);
+    }
+
+    public Integer getLocationX() {
+        return getLocationField(Location::getX);
+    }
+
+    public Integer getLocationY() {
+        return getLocationField(Location::getY);
+    }
+
+    private <T> T getGroupAdminField(Function<Person, T> mapper) {
+        return groupAdmin == null
+            ? null
+            : mapper.apply(groupAdmin);
+    }
+
+    private <T> T getLocationField(Function<Location, T> mapper) {
+        Location location = getGroupAdminField(Person::getLocation);
+        return location == null
+            ? null
+            : mapper.apply(location);
+    }
+
+    public String getLocationName() {
+        return getLocationField(Location::getLocationName);
     }
 
     /**
@@ -119,7 +145,7 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
      * @return group admin
      */
     public Person getGroupAdmin() {
-        return this.groupAdmin;
+        return groupAdmin;
     }
 
     public void setId(Long id) {

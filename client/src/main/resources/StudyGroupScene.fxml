@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<TableView prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.StudyGroupController" fx:id="studyGroupTable" />
+<VBox prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.StudyGroupController">
+    <children>
+        <TableView fx:id="studyGroupTable" />
+        <HBox prefHeight="38.0" prefWidth="1200.0" spacing="8.0">
+         <children>
+             <TextField fx:id="nameFilter" prefHeight="25.0" prefWidth="123.0" promptText="filter name" />
+             <TextField fx:id="countFilter" prefHeight="25.0" prefWidth="82.0" promptText="filter headcount" />
+             <DatePicker fx:id="dateFilter" prefHeight="25.0" prefWidth="108.0" promptText="date filter" />
+             <ComboBox fx:id="educationFilter" prefWidth="150.0" promptText="education filter" />
+             <ComboBox fx:id="semesterFilter" prefWidth="150.0" promptText="semester filter" />
+             <TextField fx:id="adminNameFilter" prefHeight="25.0" prefWidth="131.0" promptText="adminName filter" />
+             <DatePicker fx:id="birthdayFilter" prefHeight="25.0" prefWidth="115.0" promptText="birthday filter" />
+             <TextField fx:id="passportIdFilter" prefHeight="25.0" prefWidth="124.0" promptText="passport id filter" />
+
+            <Button mnemonicParsing="false" onAction="#clearFilters" text="Clear filters" />
+         </children>
+        </HBox>
+    </children>
+</VBox>

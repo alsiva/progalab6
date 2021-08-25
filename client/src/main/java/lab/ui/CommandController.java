@@ -55,6 +55,10 @@ public class CommandController extends AbstractCommandController {
     @FXML
     public EnterPersonController enterPersonController;
 
+    public void visualize() throws IOException {
+        Pages.openVisualizePage(primaryStage, connectionManager, credentials);
+    }
+
     public void add() throws IOException {
         StudyGroup group;
         try {

@@ -31,6 +31,7 @@ public class Pages {
 
     public static void openLoginPage(Stage primaryStage, ConnectionManagerClient connectionManager) throws IOException  {
         openPage(primaryStage, "/LoginScene.fxml", (LoginController controller) -> {
+            primaryStage.setTitle("Please log in or register");
             controller.setPrimaryStage(primaryStage);
             controller.setConnectionManager(connectionManager);
         });
@@ -38,6 +39,15 @@ public class Pages {
 
     public static void openCommandsPage(Stage primaryStage, ConnectionManagerClient connectionManager, Credentials credentials) throws IOException {
         openPage(primaryStage, "/CommandScene.fxml", (CommandController controller) -> {
+            primaryStage.setTitle("Logged in as " + credentials.username);
+            controller.setPrimaryStage(primaryStage);
+            controller.setConnectionManager(connectionManager);
+            controller.setCredentials(credentials);
+        });
+    }
+
+    public static void openVisualizePage(Stage primaryStage, ConnectionManagerClient connectionManager, Credentials credentials) throws IOException {
+        openPage(primaryStage, "/VisualizeGroup.fxml", (VisualizeController controller) -> {
             controller.setPrimaryStage(primaryStage);
             controller.setConnectionManager(connectionManager);
             controller.setCredentials(credentials);
@@ -68,7 +78,7 @@ public class Pages {
 
     public static void openStudyGroupsModal(Window owner, List<StudyGroup> groups) throws IOException {
         openModal(owner, "/StudyGroupScene.fxml", "Info", (Parent root, StudyGroupController controller) -> {
-            controller.setStudyGroups(groups);
+            controller.initData(groups);
         });
     }
 }
