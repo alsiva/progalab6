@@ -1,27 +1,12 @@
 package lab.ui;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import lab.CommandReader;
-import lab.ConnectionManagerClient;
-import lab.auth.Credentials;
 import lab.commands.*;
-import lab.domain.FailedToParseException;
-import lab.domain.PrintRepresentation;
-import lab.domain.Semester;
-import lab.domain.StudyGroup;
+import lab.domain.*;
 import lab.response.*;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,22 +16,6 @@ public class CommandController extends AbstractCommandController {
     public void initialize() {
         filterLessThenSemesterChoiceBox.getItems().setAll(Semester.values());
         filterLessThenSemesterChoiceBox.setValue(Semester.SECOND);
-    }
-
-    public void setPrimaryStage(Stage primaryStage) { this.primaryStage = primaryStage; }
-
-    public void setConnectionManager(ConnectionManagerClient connectionManager) {
-        this.connectionManager = connectionManager;
-    }
-
-    public void setCredentials(Credentials credentials) {
-        this.credentials = credentials;
-    }
-
-    public void help() throws IOException {
-        String message = CommandReader.HELP_CONTENTS;
-        Pages.openInfoModal(primaryStage, message);
-        //todo fix help command
     }
 
     public void info() throws IOException {
@@ -81,6 +50,11 @@ public class CommandController extends AbstractCommandController {
     @FXML
     public EnterStudyGroupController enterStudyGroupController;
 
+    @FXML
+    public Node enterPerson;
+    @FXML
+    public EnterPersonController enterPersonController;
+
     public void add() throws IOException {
         StudyGroup group;
         try {
@@ -90,10 +64,32 @@ public class CommandController extends AbstractCommandController {
             return;
         }
 
+        getResponse(new AddCommand(group));
+
         Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
     }
 
-    public void updateId() {
+    public void updateId() throws IOException {
+        StudyGroup group;
+        try {
+            group = enterStudyGroupController.getGroup();
+        } catch (FailedToParseException e) {
+            Pages.openInfoModal(primaryStage, e.getMessage());
+            return;
+        }
+
+        Response response = getResponse(new UpdateIdCommand(group));
+
+        if (!(response instanceof UpdateIdResponse)) {
+            Pages.openInfoModal(primaryStage, "Unknown command from server");
+            return;
+        }
+
+        if (((UpdateIdResponse) response).getWasUpdated()) {
+            Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
+        } else {
+            Pages.openInfoModal(primaryStage, "Group wasn't updated");
+        }
 
     }
 
@@ -142,12 +138,49 @@ public class CommandController extends AbstractCommandController {
         Pages.openInfoModal(primaryStage, message);
     }
 
-    public void addIfMin() {
+    public void addIfMin() throws IOException {
+
+        StudyGroup group;
+        try {
+            group = enterStudyGroupController.getGroup();
+        } catch (FailedToParseException e) {
+            Pages.openInfoModal(primaryStage, e.getMessage());
+            return;
+        }
+
+        Response response = getResponse(new AddIfMinCommand(group));
+
+        if (!(response instanceof AddIfMinResponse)) {
+            Pages.openInfoModal(primaryStage, "Unknown command from server");
+            return;
+        }
+
+        if (((AddIfMinResponse) response).getWasAdded()) {
+            Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
+        } else {
+            Pages.openInfoModal(primaryStage, "Group wasn't added");
+        }
 
     }
 
-    public void removeLower() {
+    public void removeLower() throws IOException {
+        StudyGroup group;
+        try {
+            group = enterStudyGroupController.getGroup();
+        } catch (FailedToParseException e) {
+            Pages.openInfoModal(primaryStage, e.getMessage());
+            return;
+        }
 
+        Response response = getResponse(new RemoveLowerCommand(group));
+
+        if (!(response instanceof RemoveLowerResponse)) {
+            Pages.openInfoModal(primaryStage, "Unknown command from server");
+            return;
+        }
+
+        List<StudyGroup> removedGroups = ((RemoveLowerResponse) response).getGroups();
+        Pages.openStudyGroupsModal(primaryStage, removedGroups);
     }
 
     @FXML
@@ -177,7 +210,24 @@ public class CommandController extends AbstractCommandController {
         Pages.openStudyGroupsModal(primaryStage, removedGroups);
     }
 
-    public void countByGroupAdmin() {
+    public void countByGroupAdmin() throws IOException {
+        Person person;
+        try {
+            person = enterPersonController.getPerson();
+        } catch (FailedToParseException e) {
+            Pages.openInfoModal(primaryStage, e.getMessage());
+            return;
+        }
+
+        Response response = getResponse(new CountByGroupAdminCommand(person));
+
+        if (!(response instanceof CountByGroupAdminResponse)) {
+            Pages.openInfoModal(primaryStage, "Unknown command from server");
+            return;
+        }
+
+        long count = ((CountByGroupAdminResponse) response).getCount();
+        Pages.openInfoModal(primaryStage, count + " groups with this group admin");
 
     }
 

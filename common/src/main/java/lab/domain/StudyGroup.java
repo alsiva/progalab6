@@ -1,6 +1,7 @@
 package lab.domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -67,6 +68,30 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
      */
     public Coordinates getCoordinates() {
         return coordinates;
+    }
+
+    public float getCoordinateX() {
+        return coordinates.getX();
+    }
+
+    public int getCoordinateY() {
+        return coordinates.getY();
+    }
+
+    public Person getAdmin() {
+        return groupAdmin;
+    }
+
+    public String getAdminName() {
+        return groupAdmin.getName();
+    }
+
+    public LocalDate getAdminBirthday() {
+        return  groupAdmin.getBirthday();
+    }
+
+    public String getPassportId() {
+        return  groupAdmin.getPassportID();
     }
 
     /**

@@ -8,6 +8,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lab.domain.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,14 @@ public class StudyGroupController {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn<StudyGroup, Coordinates> coordinatesCol = new TableColumn<>("coordinates");
-        coordinatesCol.setCellValueFactory(new PropertyValueFactory<>("coordinates"));
+
+        TableColumn<StudyGroup, Float> coordinatesXCol = new TableColumn<>("coordinates.x");
+        TableColumn<StudyGroup, Integer> coordinatesYCol = new TableColumn<>("coordinates.y");
+
+        coordinatesXCol.setCellValueFactory(new PropertyValueFactory<>("coordinateX"));
+        coordinatesYCol.setCellValueFactory(new PropertyValueFactory<>("coordinateY"));
+
+        coordinatesCol.getColumns().addAll(coordinatesXCol, coordinatesYCol);
 
         TableColumn<StudyGroup, Date> creationDateCol = new TableColumn<>("creationDate");
         creationDateCol.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
@@ -38,6 +46,16 @@ public class StudyGroupController {
 
         TableColumn<StudyGroup, Person> groupAdminCol = new TableColumn<>("groupAdmin");
         groupAdminCol.setCellValueFactory(new PropertyValueFactory<>("groupAdmin"));
+
+        TableColumn<StudyGroup, String> adminNameCol = new TableColumn<>("admin name");
+        TableColumn<StudyGroup, LocalDate> adminBirthdayCol = new TableColumn<>("admin birthday");
+        TableColumn<StudyGroup, String> adminPassportId = new TableColumn<>("admin passport id");
+
+        adminNameCol.setCellValueFactory(new PropertyValueFactory<>("AdminName"));
+        adminNameCol.setCellValueFactory(new PropertyValueFactory<>("AdminBirthday"));
+        adminNameCol.setCellValueFactory(new PropertyValueFactory<>("PassportId"));
+
+        groupAdminCol.getColumns().addAll(adminNameCol, adminBirthdayCol, adminPassportId);
 
         TableColumn<StudyGroup, String> creatorCol = new TableColumn<>("creator");
         creatorCol.setCellValueFactory(new PropertyValueFactory<>("creator"));

@@ -15,8 +15,6 @@
                     </font>
                 </Label>
                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out" />
-                <Button mnemonicParsing="false" onAction="#help" text="Help" />
-                <Button mnemonicParsing="false" onAction="#add" text="Add" />
             </children>
         </HBox>
 
@@ -86,14 +84,29 @@
                                 <HBox spacing="8.0">
                                     <children>
                                         <Button mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="130.0" text="Add" />
-                                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="138.0" text="Remove lower" />
-                                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="158.0" text="Add if min" />
+                                        <Button mnemonicParsing="false" onAction="#removeLower" prefHeight="25.0" prefWidth="138.0" text="Remove lower" />
+                                        <Button mnemonicParsing="false" onAction="#addIfMin" prefHeight="25.0" prefWidth="155.0" text="Add if min" />
+                                        <Button mnemonicParsing="false" onAction="#updateId" prefHeight="25.0" prefWidth="155.0" text="Update id" />
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
                     </content>
                 </Tab>
+            <Tab text="CountByGroupAdmin">
+              <content>
+                  <VBox>
+                      <children>
+                          <fx:include fx:id="enterPerson" source="EnterPerson.fxml" />
+                          <HBox spacing="8.0">
+                              <children>
+                                  <Button mnemonicParsing="false" onAction="#countByGroupAdmin" prefHeight="25.0" prefWidth="130.0" text="Count" />
+                              </children>
+                          </HBox>
+                      </children>
+                  </VBox>
+              </content>
+            </Tab>
             </tabs>
         </TabPane>
     </children>

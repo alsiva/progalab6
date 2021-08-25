@@ -30,17 +30,6 @@ public class EnterStudyGroupController extends AbstractCommandController {
         semester.getItems().setAll(Semester.values());
         semester.setValue(Semester.SECOND);
     }
-/*
-    public void add() throws FailedToParseException, IOException {
-        Response response = getResponse(new AddCommand(readStudyGroup()));
-
-        if (!(response instanceof AddResponse)) {
-            return;
-        }
-
-        Pages.openInfoModal(primaryStage, "Группа была добавлена успешна");
-    }
-*/
 
     private Coordinates readCoordinates() throws FailedToParseException {
         String xField = coordinatesX.getText();
