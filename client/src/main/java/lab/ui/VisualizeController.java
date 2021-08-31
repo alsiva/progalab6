@@ -17,12 +17,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class VisualizeController extends AbstractCommandController {
 
     protected Stage primaryStage;
 
-    public void setPrimaryStage(Stage primaryStage) { this.primaryStage = primaryStage; }
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
 
     @FXML
     Canvas canvas;
@@ -44,68 +47,74 @@ public class VisualizeController extends AbstractCommandController {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        for (StudyGroup group: studyGroups) {
-            double x = group.getCoordinateX() * 10;
-            double y = group.getCoordinateY() * 10;
+        int rectSize = 30;
+
+        Random generator = new Random(7032863866410503392L);
+        for (StudyGroup group : studyGroups) {
+            int x = generator.nextInt((int) canvas.getWidth() - rectSize);
+            int y = generator.nextInt((int) canvas.getHeight() - rectSize);
+
             int count = group.getStudentsCount();
 
             Rectangle rectangle = new Rectangle();
-            
 
             rectangle.setX(x);
             rectangle.setY(y);
             rectangle.setWidth(30);
             rectangle.setHeight(30);
-            rectangle.setFill(Color.LIMEGREEN);
+
+            String name = group.getAdminName();
 
 
-            gc.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+            Random colorRandom = new Random(name == null ? "group-with-empty-admin".hashCode() : name.hashCode());
+            byte[] rgb = new byte[3];
+            colorRandom.nextBytes(rgb);
+
+            gc.setFill(Color.rgb(rgb[0] + 128, rgb[1] + 128, rgb[2] + 128));
+            gc.fillRect(x, y, 30, 30);
 
             squares.add(new Square(x, y, 30, 30, group));
         }
 
-        EventHandler<MouseEvent> eventHandler = e -> {
-
-            for (Square square: squares) {
-                if ((e.getX() - square.x <= square.width) && (e.getX() >= square.x))  {
+        canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            for (Square square : squares) {
+                if ((e.getX() - square.x <= square.width) && (e.getX() >= square.x)) {
                     if ((e.getY() - square.y <= square.height) && (e.getY() >= square.y)) {
                         try {
-                            Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,Collections.singletonList(square.getStudyGroup()));
+                            Pages.openEditGroupModal(primaryStage, connectionManager, credentials, square.getStudyGroup(), group -> {});
+                            return;
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
                         }
                     }
                 }
             }
-        };
-
-        canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-
-        }
+        });
+    }
 
     public void exit() throws IOException {
         Pages.openCommandsPage(primaryStage, connectionManager, credentials);
     }
 
+}
+
+class Square {
+    double x;
+    double y;
+    double width;
+    double height;
+    StudyGroup studyGroup;
+
+    public Square(double x, double y, double width, double height, StudyGroup studyGroup) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.studyGroup = studyGroup;
     }
 
-    class Square {
-        double x;
-        double y;
-        double width;
-        double height;
-        StudyGroup studyGroup;
-
-        public Square(double x, double y, double width, double height, StudyGroup studyGroup) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.studyGroup = studyGroup;
-        }
-
-        public StudyGroup getStudyGroup() {
-            return studyGroup;
-        }
-
+    public StudyGroup getStudyGroup() {
+        return studyGroup;
     }
+
+}
