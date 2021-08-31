@@ -16,7 +16,6 @@
              <TextField fx:id="adminNameFilter" prefHeight="25.0" prefWidth="131.0" promptText="adminName filter" />
              <DatePicker fx:id="birthdayFilter" prefHeight="25.0" prefWidth="115.0" promptText="birthday filter" />
              <TextField fx:id="passportIdFilter" prefHeight="25.0" prefWidth="124.0" promptText="passport id filter" />
-
             <Button mnemonicParsing="false" onAction="#clearFilters" text="Clear filters" />
          </children>
         </HBox>

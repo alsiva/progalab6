@@ -37,4 +37,18 @@ public class EnterPersonController {
 
         return new Person(null, adminName, adminBirthday, passportId, location);
     }
+
+    public void setPerson(Person admin) {
+        personName.setText(admin.getName());
+        birthdayPicker.setValue(admin.getBirthday());
+        String passportID = admin.getPassportID();
+        if (passportID != null) {
+            passport.setText(passportID);
+        }
+
+        Location location = admin.getLocation();
+        if (location != null) {
+            enterLocationController.setLocation(location);
+        }
+    }
 }

@@ -7,15 +7,20 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import lab.domain.*;
-
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class StudyGroupController {
+public class StudyGroupController extends AbstractCommandController {
+    private Stage stage;
+
+    public void setStage(Stage stage) { this.stage = stage; }
+
     @FXML
     public TableView<StudyGroup> studyGroupTable;
 
@@ -187,6 +192,22 @@ public class StudyGroupController {
         creatorCol.setCellValueFactory(new PropertyValueFactory<>("creator"));
 
         studyGroupTable.getColumns().addAll(nameCol, coordinatesCol, creationDateCol, studentsCountCol, formOfEducationCol, semesterCol, groupAdminCol, creatorCol);
+        studyGroupTable.setOnMousePressed(event -> {
+            if (!event.isPrimaryButtonDown() || event.getClickCount() != 2) {
+                return;
+            }
+
+            TableView.TableViewSelectionModel<StudyGroup> selectionModel = studyGroupTable.getSelectionModel();
+            int index = selectionModel.getSelectedIndex();
+            StudyGroup group = selectionModel.getSelectedItem();
+            try {
+                Pages.openEditGroupModal(stage, connectionManager, credentials, group, modifiedGroup -> {
+                    list.set(index, modifiedGroup);
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void initData(List<StudyGroup> items) {

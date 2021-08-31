@@ -1,6 +1,5 @@
 package lab.ui;
 
-import javafx.stage.Stage;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
 import lab.commands.Command;
@@ -13,9 +12,6 @@ public abstract class AbstractCommandController {
 
     protected Credentials credentials;
     protected ConnectionManagerClient connectionManager;
-    protected Stage primaryStage;
-
-    public void setPrimaryStage(Stage primaryStage) { this.primaryStage = primaryStage; }
 
     public void setConnectionManager(ConnectionManagerClient connectionManager) {
         this.connectionManager = connectionManager;
@@ -32,13 +28,10 @@ public abstract class AbstractCommandController {
             System.err.println("Failed to send command " + e.getMessage());
         }
 
-        Response response;
         try {
-            response = connectionManager.receiveResponse();
-            return response;
-        } catch (IOException | ClassNotFoundException e) {
-            Pages.openInfoModal(primaryStage, "Failed to get response from server");
-            return null;
+            return connectionManager.receiveResponse();
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Failed to deserialize response", e);
         }
     }
 }

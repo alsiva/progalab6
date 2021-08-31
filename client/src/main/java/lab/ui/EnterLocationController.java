@@ -22,4 +22,10 @@ public class EnterLocationController {
 
         return new Location(null, locationX, locationY, locationName);
     }
+
+    public void setLocation(Location location) {
+        x.setText(String.valueOf(location.getX()));
+        y.setText(String.valueOf(location.getY()));
+        name.setText(location.getLocationName());
+    }
 }

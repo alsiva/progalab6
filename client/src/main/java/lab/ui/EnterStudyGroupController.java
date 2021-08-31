@@ -66,4 +66,20 @@ public class EnterStudyGroupController extends AbstractCommandController {
         );
 
     }
+
+    public void setGroup(StudyGroup studyGroup) {
+        name.setText(studyGroup.getName());
+        coordinatesX.setText(String.valueOf(studyGroup.getCoordinateX()));
+        coordinatesY.setText(String.valueOf(studyGroup.getCoordinateY()));
+        studentsCount.setText(String.valueOf(studyGroup.getStudentsCount()));
+
+        formOfEducation.setValue(studyGroup.getFormOfEducation());
+        semester.setValue(studyGroup.getSemesterEnum());
+
+
+        Person admin = studyGroup.getAdmin();
+        if (admin != null) {
+            enterPersonController.setPerson(admin);
+        }
+    }
 }

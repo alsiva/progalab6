@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="360.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="lab.ui.EditGroupController">
+    <children>
+        <fx:include fx:id="enterStudyGroup" source="EnterStudyGroup.fxml"/>
+        <Button fx:id="update" mnemonicParsing="false" onAction="#update" text="Update">
+            <VBox.margin>
+                <Insets left="16.0"/>
+            </VBox.margin>
+        </Button>
+    </children>
+</VBox>

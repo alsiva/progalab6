@@ -3,6 +3,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import lab.commands.*;
 import lab.domain.*;
 import lab.response.*;
@@ -17,6 +18,11 @@ public class CommandController extends AbstractCommandController {
         filterLessThenSemesterChoiceBox.getItems().setAll(Semester.values());
         filterLessThenSemesterChoiceBox.setValue(Semester.SECOND);
     }
+
+    protected Stage primaryStage;
+
+    public void setPrimaryStage(Stage primaryStage) { this.primaryStage = primaryStage; }
+
 
     public void info() throws IOException {
         InfoCommand command = new InfoCommand();
@@ -42,7 +48,7 @@ public class CommandController extends AbstractCommandController {
         }
 
         List<StudyGroup> studyGroups = ((ShowResponse) response).getGroups();
-        Pages.openStudyGroupsModal(primaryStage, studyGroups);
+        Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials, studyGroups);
     }
 
     @FXML
@@ -70,7 +76,7 @@ public class CommandController extends AbstractCommandController {
 
         getResponse(new AddCommand(group));
 
-        Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
+        Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,Collections.singletonList(group));
     }
 
     public void updateId() throws IOException {
@@ -90,7 +96,7 @@ public class CommandController extends AbstractCommandController {
         }
 
         if (((UpdateIdResponse) response).getWasUpdated()) {
-            Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
+            Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,Collections.singletonList(group));
         } else {
             Pages.openInfoModal(primaryStage, "Group wasn't updated");
         }
@@ -160,7 +166,7 @@ public class CommandController extends AbstractCommandController {
         }
 
         if (((AddIfMinResponse) response).getWasAdded()) {
-            Pages.openStudyGroupsModal(primaryStage, Collections.singletonList(group));
+            Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,Collections.singletonList(group));
         } else {
             Pages.openInfoModal(primaryStage, "Group wasn't added");
         }
@@ -184,7 +190,7 @@ public class CommandController extends AbstractCommandController {
         }
 
         List<StudyGroup> removedGroups = ((RemoveLowerResponse) response).getGroups();
-        Pages.openStudyGroupsModal(primaryStage, removedGroups);
+        Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,removedGroups);
     }
 
     @FXML
@@ -211,7 +217,7 @@ public class CommandController extends AbstractCommandController {
         }
 
         List<StudyGroup> removedGroups = ((RemoveAllByStudentsCountResponse) response).getRemovedGroups();
-        Pages.openStudyGroupsModal(primaryStage, removedGroups);
+        Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,removedGroups);
     }
 
     public void countByGroupAdmin() throws IOException {
@@ -248,7 +254,7 @@ public class CommandController extends AbstractCommandController {
         }
 
         List<StudyGroup> studyGroupWithLessSemester = ((FilterLessThanSemesterEnumResponse) response).getStudyGroupWithLessSemester();
-        Pages.openStudyGroupsModal(primaryStage, studyGroupWithLessSemester);
+        Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,studyGroupWithLessSemester);
     }
 
     public void logOut() throws IOException {
