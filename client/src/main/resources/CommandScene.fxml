@@ -66,6 +66,18 @@
                 <VBox>
                     <children>
                         <fx:include fx:id="enterStudyGroup" source="EnterStudyGroup.fxml" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="726.0">
+                     <children>
+                        <TextField fx:id="EnterIdField" alignment="CENTER" promptText="EnterIdField">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </TextField>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
                         <HBox spacing="8.0">
                             <children>
                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="130.0" text="Add" />

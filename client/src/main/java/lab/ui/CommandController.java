@@ -81,6 +81,8 @@ public class CommandController extends AbstractCommandController implements Loca
         Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,Collections.singletonList(group));
     }
 
+    @FXML
+    TextField EnterIdField;
     public void updateId() throws IOException {
         StudyGroup group;
         try {
@@ -89,6 +91,18 @@ public class CommandController extends AbstractCommandController implements Loca
             Pages.openInfoModal(primaryStage, e.getMessage());
             return;
         }
+
+        String idAsStr = EnterIdField.getText().trim();
+        long id;
+        try {
+            id = Long.parseLong(idAsStr);
+        } catch (NumberFormatException e) {
+            // display error
+            Pages.openInfoModal(primaryStage, idAsStr + " is not long");
+            return;
+        }
+
+        group.setId(id);
 
         Response response = getResponse(new UpdateIdCommand(group));
 

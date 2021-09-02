@@ -155,6 +155,10 @@ public class StudyGroupController extends AbstractCommandController implements L
 
     @SuppressWarnings("unchecked")
     private void initializeColumns() {
+
+        TableColumn<StudyGroup, Long> idCol = new TableColumn<>("Group id");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+
         TableColumn<StudyGroup, String> nameCol = new TableColumn<>("Group name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -206,7 +210,7 @@ public class StudyGroupController extends AbstractCommandController implements L
         TableColumn<StudyGroup, String> creatorCol = new TableColumn<>("creator");
         creatorCol.setCellValueFactory(new PropertyValueFactory<>("creator"));
 
-        studyGroupTable.getColumns().addAll(nameCol, coordinatesCol, creationDateCol, studentsCountCol, formOfEducationCol, semesterCol, groupAdminCol, creatorCol);
+        studyGroupTable.getColumns().addAll(idCol ,nameCol, coordinatesCol, creationDateCol, studentsCountCol, formOfEducationCol, semesterCol, groupAdminCol, creatorCol);
         studyGroupTable.setOnMousePressed(event -> {
             if (!event.isPrimaryButtonDown() || event.getClickCount() != 2) {
                 return;
