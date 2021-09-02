@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="344.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.LoginController">
-    <Label layoutX="155.0" layoutY="35.0" text="Входная панель">
+    <Label fx:id="enterLabel" layoutX="155.0" layoutY="35.0" text="Enter panel">
         <font>
             <Font size="40.0" />
         </font>
@@ -17,8 +17,8 @@
          <Label fx:id="errorLabel" prefHeight="34.0" prefWidth="307.0" textFill="#a12e2e" />
          <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="25.0" prefWidth="300.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#logIn" prefHeight="25.0" prefWidth="150.0" text="Log in" HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="150.0" text="Register" HBox.hgrow="ALWAYS" />
+                <Button fx:id="loginButton" mnemonicParsing="false" onAction="#logIn" prefHeight="25.0" prefWidth="150.0" text="Log in" HBox.hgrow="ALWAYS" />
+                <Button fx:id="registerButton" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="150.0" text="Register" HBox.hgrow="ALWAYS" />
             </children>
          </HBox>
       </children>

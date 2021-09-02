@@ -1,6 +1,10 @@
 package lab.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -11,9 +15,10 @@ import lab.response.Response;
 import lab.response.UpdateIdResponse;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class EditGroupController extends AbstractCommandController {
+public class EditGroupController extends AbstractCommandController implements LocalizedController {
 
     @FXML
     public AnchorPane enterStudyGroup;
@@ -26,6 +31,16 @@ public class EditGroupController extends AbstractCommandController {
 
     private Long id;
     private Consumer<StudyGroup> onSuccess;
+
+    @FXML
+    Button updateButton;
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        enterStudyGroupController.updateLanguage(bundle);
+        updateButton.setText(bundle.getString("UpdateStudyGroup.updateButton"));
+
+    }
 
     public void setStudyGroup(StudyGroup studyGroup) {
         id = studyGroup.getId();

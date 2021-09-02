@@ -4,16 +4,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane prefHeight="361.0" prefWidth="735.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
+<TabPane prefHeight="380.0" prefWidth="740.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.CommandController">
     <tabs>
-        <Tab text="Simple commands">
+        <Tab fx:id="simpleCommands" text="Simple commands">
             <content>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="56.0" text="Clear" />
-                        <Button mnemonicParsing="false" onAction="#info" prefHeight="25.0" prefWidth="54.0" text="Info" />
-                        <Button mnemonicParsing="false" onAction="#show" prefHeight="25.0" prefWidth="56.0" text="Show" />
-                        <Button mnemonicParsing="false" onAction="#visualize" text="Visualize" />
+                        <Button fx:id="clear" mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="56.0" text="Clear" />
+                        <Button fx:id="info" mnemonicParsing="false" onAction="#info" prefHeight="25.0" prefWidth="54.0" text="Info" />
+                        <Button fx:id="show" mnemonicParsing="false" onAction="#show" prefHeight="25.0" prefWidth="56.0" text="Show" />
+                        <Button fx:id="visualize" mnemonicParsing="false" onAction="#visualize" text="Visualize" />
                     </children>
                     <padding>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -21,14 +21,14 @@
                 </HBox>
             </content>
         </Tab>
-        <Tab text="Remove study group">
+        <Tab fx:id="removeStudyGroup" text="Remove study group">
             <content>
                 <VBox prefWidth="200.0">
                     <HBox spacing="8.0">
                         <children>
-                            <Label prefHeight="25.0" prefWidth="112.0" text="by id" textAlignment="RIGHT" />
+                            <Label fx:id="byId" prefHeight="25.0" prefWidth="138.0" text="by id" textAlignment="RIGHT" />
                             <TextField fx:id="removeByIdIdField" prefHeight="25.0" prefWidth="115.0" promptText="study group id" />
-                            <Button onAction="#removeById" prefHeight="25.0" prefWidth="80.0" text="Remove" textAlignment="CENTER" />
+                            <Button fx:id="removeByIdButton" onAction="#removeById" prefHeight="25.0" prefWidth="91.0" text="Remove" textAlignment="CENTER" />
                         </children>
                         <padding>
                             <Insets bottom="4.0" left="8.0" right="8.0" top="12.0" />
@@ -36,9 +36,9 @@
                     </HBox>
                     <HBox spacing="8.0">
                         <children>
-                            <Label prefHeight="25.0" prefWidth="112.0" text="by student count" textAlignment="RIGHT" />
+                            <Label fx:id="byStudentsCount" prefHeight="25.0" prefWidth="140.0" text="by student count" textAlignment="RIGHT" />
                             <TextField fx:id="removeAllByStudentsCountField" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="115.0" promptText="count" />
-                            <Button onAction="#removeAllByStudentsCount" prefHeight="25.0" prefWidth="80.0" text="Remove" textAlignment="CENTER" />
+                            <Button fx:id="remove2" onAction="#removeAllByStudentsCount" prefHeight="25.0" prefWidth="89.0" text="Remove" textAlignment="CENTER" />
                         </children>
                         <padding>
                             <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
@@ -47,13 +47,13 @@
                 </VBox>
             </content>
         </Tab>
-        <Tab text="Filter">
+        <Tab fx:id="filter" text="Filter">
             <content>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                     <children>
-                        <Label prefHeight="25.0" prefWidth="220.0" text="Show groups having lesser semester then" />
-                        <ChoiceBox fx:id="filterLessThenSemesterChoiceBox" prefHeight="25.0" prefWidth="142.0" />
-                        <Button mnemonicParsing="false" onAction="#filterLessThanSemesterEnum" prefHeight="25.0" prefWidth="67.0" text="Filter" />
+                        <Label fx:id="showGroupsHavingLessSem" prefHeight="25.0" prefWidth="279.0" text="Show groups having lesser semester then" />
+                        <ChoiceBox fx:id="filterLessThenSemesterChoiceBox" prefHeight="25.0" prefWidth="155.0" />
+                        <Button fx:id="filterShowGroupsHavingLessSem" mnemonicParsing="false" onAction="#filterLessThanSemesterEnum" prefHeight="25.0" prefWidth="108.0" text="Filter" />
                     </children>
                     <padding>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -61,42 +61,50 @@
                 </HBox>
             </content>
         </Tab>
-        <Tab text="Study group commands">
+        <Tab fx:id="studyGroupCommands" text="Study group commands">
             <content>
                 <VBox>
                     <children>
                         <fx:include fx:id="enterStudyGroup" source="EnterStudyGroup.fxml" />
                         <HBox spacing="8.0">
                             <children>
-                                <Button mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="130.0" text="Add" />
-                                <Button mnemonicParsing="false" onAction="#removeLower" prefHeight="25.0" prefWidth="138.0" text="Remove lower" />
-                                <Button mnemonicParsing="false" onAction="#addIfMin" prefHeight="25.0" prefWidth="155.0" text="Add if min" />
-                                <Button mnemonicParsing="false" onAction="#updateId" prefHeight="25.0" prefWidth="155.0" text="Update id" />
+                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#add" prefHeight="25.0" prefWidth="130.0" text="Add" />
+                                <Button fx:id="removeLowerButton" mnemonicParsing="false" onAction="#removeLower" prefHeight="25.0" prefWidth="159.0" text="Remove lower" />
+                                <Button fx:id="addIfMinButton" mnemonicParsing="false" onAction="#addIfMin" prefHeight="25.0" prefWidth="178.0" text="Add if min" />
+                                <Button fx:id="updateIdButton" mnemonicParsing="false" onAction="#updateId" prefHeight="25.0" prefWidth="185.0" text="Update id" />
                             </children>
                         </HBox>
                     </children>
                 </VBox>
             </content>
         </Tab>
-        <Tab text="Count by group admin">
+        <Tab fx:id="countByGroupAdmin" text="Count by group admin">
             <content>
                 <VBox>
                     <children>
                         <fx:include fx:id="enterPerson" source="EnterPerson.fxml" />
                         <HBox spacing="8.0">
                             <children>
-                                <Button mnemonicParsing="false" onAction="#countByGroupAdmin" prefHeight="25.0" prefWidth="130.0" text="Count" />
+                                <Button fx:id="countButton" mnemonicParsing="false" onAction="#countByGroupAdmin" prefHeight="25.0" prefWidth="130.0" text="Count" />
                             </children>
                         </HBox>
                     </children>
+               <padding>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </padding>
                 </VBox>
             </content>
         </Tab>
-        <Tab text="Settings">
+        <Tab fx:id="settings" text="Settings">
             <content>
                 <HBox spacing="8.0">
                     <children>
-                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out" />
+                        <ComboBox fx:id="languageComboBox" prefWidth="150.0" promptText="Language" />
+                        <Button fx:id="changeLanguage" mnemonicParsing="false" onAction="#changeLanguage" prefHeight="25.0" prefWidth="132.0" text="Change Language" />
+                        <Button fx:id="logOutButton" alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out">
+                     <HBox.margin>
+                        <Insets left="24.0" />
+                     </HBox.margin></Button>
                     </children>
                     <padding>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

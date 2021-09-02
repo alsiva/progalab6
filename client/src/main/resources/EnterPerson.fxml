@@ -8,7 +8,7 @@
    <children>
       <VBox spacing="8.0">
          <children>
-            <Label text="Group Admin">
+            <Label fx:id="groupAdminLabel" text="Group Admin">
                <padding>
                   <Insets left="8.0" top="8.0" />
                </padding></Label>

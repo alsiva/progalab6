@@ -14,9 +14,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
-public class StudyGroupController extends AbstractCommandController {
+public class StudyGroupController extends AbstractCommandController implements LocalizedController {
     private Stage stage;
 
     public void setStage(Stage stage) { this.stage = stage; }
@@ -34,7 +35,21 @@ public class StudyGroupController extends AbstractCommandController {
     ComboBox<FormOfEducation> educationFilter;
     @FXML
     TextField adminNameFilter, passportIdFilter;
+    @FXML
+    Button clearFiltersButton;
 
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        nameFilter.setPromptText(bundle.getString("StudyGroupPage.nameFilter"));
+        countFilter.setPromptText(bundle.getString("StudyGroupPage.countFilter"));
+        dateFilter.setPromptText(bundle.getString("StudyGroupPage.dateFilter"));
+        birthdayFilter.setPromptText(bundle.getString("StudyGroupPage.birthdayFilter"));
+        semesterFilter.setPromptText(bundle.getString("StudyGroupPage.semesterFilter"));
+        educationFilter.setPromptText(bundle.getString("StudyGroupPage.educationFilter"));
+        adminNameFilter.setPromptText(bundle.getString("StudyGroupPage.adminNameFilter"));
+        passportIdFilter.setPromptText(bundle.getString("StudyGroupPage.passportIdFilter"));
+        clearFiltersButton.setText(bundle.getString("StudyGroupPage.clearFilterButton"));
+    }
 
     @FXML
     void clearFilters() {

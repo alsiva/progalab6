@@ -3,14 +3,16 @@ package lab.ui;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import lab.domain.FailedToParseException;
 import lab.domain.Location;
 import lab.domain.Person;
 
 import java.time.LocalDate;
+import java.util.ResourceBundle;
 
-public class EnterPersonController {
+public class EnterPersonController implements LocalizedController {
     @FXML
     TextField personName, passport;
 
@@ -22,6 +24,17 @@ public class EnterPersonController {
 
     @FXML
     EnterLocationController enterLocationController;
+    @FXML
+    Label groupAdminLabel;
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        personName.setPromptText(bundle.getString("EnterPersonController.personName"));
+        passport.setPromptText(bundle.getString("EnterPersonController.passport"));
+        birthdayPicker.setPromptText(bundle.getString("EnterPersonController.birthdayPicker"));
+        groupAdminLabel.setText(bundle.getString("EnterPersonController.groupAdminLable"));
+        enterLocationController.updateLanguage(bundle);
+    }
 
     public Person getPerson() throws FailedToParseException {
         String adminName = personName.getText().trim();

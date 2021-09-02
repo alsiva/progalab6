@@ -1,28 +1,32 @@
 package lab.ui;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lab.commands.*;
 import lab.domain.*;
+import lab.languages.UiLanguage;
 import lab.response.*;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class CommandController extends AbstractCommandController {
+public class CommandController extends AbstractCommandController implements LocalizedController {
 
     @FXML
     public void initialize() {
         filterLessThenSemesterChoiceBox.getItems().setAll(Semester.values());
         filterLessThenSemesterChoiceBox.setValue(Semester.SECOND);
+
+        languageComboBox.getItems().setAll(UiLanguage.values());
+        languageComboBox.setValue(UiLanguage.getInterfaceLanguage());
     }
 
     protected Stage primaryStage;
 
     public void setPrimaryStage(Stage primaryStage) { this.primaryStage = primaryStage; }
 
+    @FXML
+    Button addButton, removeLowerButton, addIfMinButton, updateIdButton;
 
     public void info() throws IOException {
         InfoCommand command = new InfoCommand();
@@ -101,6 +105,77 @@ public class CommandController extends AbstractCommandController {
             Pages.openInfoModal(primaryStage, "Group wasn't updated");
         }
 
+    }
+
+
+    @FXML
+    Tab simpleCommands, removeStudyGroup, filter, studyGroupCommands, countByGroupAdmin, settings;
+
+    @FXML
+    Button clear, info, show, visualize;
+
+    @FXML
+    Label byId, byStudentsCount;
+
+    @FXML
+    TextField removeAllByStudentsCountField ;
+
+    @FXML
+    Button removeByIdButton, remove2, logOutButton, countButton, changeLanguage;
+
+    @FXML
+    Label showGroupsHavingLessSem;
+
+    @FXML
+    Button filterShowGroupsHavingLessSem;
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        simpleCommands.setText(bundle.getString("simpleCommands"));
+        removeStudyGroup.setText(bundle.getString("removeStudyGroup"));
+        filter.setText(bundle.getString("filter"));
+        studyGroupCommands.setText(bundle.getString("studyGroupCommands"));
+        countByGroupAdmin.setText(bundle.getString("countByGroupAdmin"));
+        settings.setText(bundle.getString("settings"));
+
+        enterStudyGroupController.updateLanguage(bundle);
+        addButton.setText(bundle.getString("addButton"));
+        removeLowerButton.setText(bundle.getString("removeLowerButton"));
+        addIfMinButton.setText(bundle.getString("addIfMinButton"));
+        updateIdButton.setText(bundle.getString("updateIdButton"));
+
+        enterPersonController.updateLanguage(bundle);
+
+        removeByIdIdField.setPromptText(bundle.getString("removeByIdPrompt"));
+        removeAllByStudentsCountField.setPromptText(bundle.getString("removeAllByStudentsCount"));
+        filterLessThenSemesterChoiceBox.setAccessibleText(bundle.getString("filterLessThanSemesterEnum"));
+
+        clear.setText(bundle.getString("clear"));
+        info.setText(bundle.getString("info"));
+        show.setText(bundle.getString("show"));
+        visualize.setText(bundle.getString("visualize"));
+
+        byId.setText(bundle.getString("byId"));
+        byStudentsCount.setText(bundle.getString("byStudentsCount"));
+
+        removeByIdButton.setText(bundle.getString("removeByIdButtonLabel"));
+        remove2.setText(bundle.getString("remove2"));
+
+        showGroupsHavingLessSem.setText(bundle.getString("showGroupsHavingLessSem"));
+        filterLessThenSemesterChoiceBox.setAccessibleText(bundle.getString("filterLessThenSemesterChoiceBox"));
+        filterShowGroupsHavingLessSem.setText(bundle.getString("filterShowGroupsHavingLessSem"));
+
+        languageComboBox.setPromptText(bundle.getString("languageComboBox"));
+        logOutButton.setText(bundle.getString("logOutButton"));
+        countButton.setText(bundle.getString("countButton"));
+        changeLanguage.setText(bundle.getString("changeLanguageButton"));
+    }
+
+    @FXML
+    ComboBox<UiLanguage> languageComboBox;
+    public void changeLanguage() {
+        UiLanguage.setLanguage(languageComboBox.getValue());
+        updateLanguage(UiLanguage.getLanguageBundle());
     }
 
     @FXML
@@ -193,8 +268,6 @@ public class CommandController extends AbstractCommandController {
         Pages.openStudyGroupsModal(primaryStage, connectionManager, credentials,removedGroups);
     }
 
-    @FXML
-    TextField removeAllByStudentsCountField;
 
     public void removeAllByStudentsCount() throws IOException {
         String countAsString = removeAllByStudentsCountField.getText().trim();

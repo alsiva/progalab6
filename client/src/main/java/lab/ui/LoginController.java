@@ -1,11 +1,11 @@
 package lab.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import lab.CommandManager;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
 import lab.commands.CheckCredentialsCommand;
@@ -15,8 +15,9 @@ import lab.response.CheckCredentialsResponse;
 import lab.response.Response;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
-public class LoginController {
+public class LoginController implements LocalizedController {
     private Stage primaryStage;
     private ConnectionManagerClient connectionManager;
 
@@ -35,6 +36,12 @@ public class LoginController {
 
     @FXML
     PasswordField passwordField;
+
+    @FXML
+    Button loginButton, registerButton;
+
+    @FXML
+    Label enterLabel;
 
     @FXML
     Label errorLabel;
@@ -85,5 +92,14 @@ public class LoginController {
         Credentials credentials = getCredentials();
         RegisterCommand loginCommand = new RegisterCommand(credentials);
         connectionManager.sendRequest(new Request(loginCommand, credentials));
+    }
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        usernameField.setPromptText(bundle.getString("LoginPage.username"));
+        passwordField.setPromptText(bundle.getString("LoginPage.password"));
+        loginButton.setText(bundle.getString("LoginPage.login"));
+        registerButton.setText(bundle.getString("LoginPage.register"));
+        enterLabel.setText(bundle.getString("LoginPage.enterPanel"));
     }
 }

@@ -8,7 +8,7 @@
       fx:controller="lab.ui.EditGroupController">
     <children>
         <fx:include fx:id="enterStudyGroup" source="EnterStudyGroup.fxml"/>
-        <Button fx:id="update" mnemonicParsing="false" onAction="#update" text="Update">
+        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#update" text="Update">
             <VBox.margin>
                 <Insets left="16.0"/>
             </VBox.margin>

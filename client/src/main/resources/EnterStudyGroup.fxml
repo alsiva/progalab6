@@ -7,7 +7,7 @@
    <children>
       <VBox layoutX="14.0" layoutY="20.0" prefHeight="149.0" prefWidth="190.0" spacing="8.0">
          <children>
-            <Label text="General info" />
+            <Label fx:id="generalInfoLabel" text="General info" />
             <TextField fx:id="name" promptText="name" />
             <TextField fx:id="studentsCount" promptText="StudentsCount" />
             <ComboBox fx:id="formOfEducation" promptText="FormOfEducation" />
@@ -16,7 +16,7 @@
       </VBox>
       <TextField fx:id="coordinatesX" layoutX="14.0" layoutY="212.0" prefHeight="25.0" prefWidth="64.0" promptText="x" />
       <TextField fx:id="coordinatesY" layoutX="91.0" layoutY="212.0" prefHeight="25.0" prefWidth="64.0" promptText="y" />
-      <Label layoutX="14.0" layoutY="187.0" text="Coordinates" />
+      <Label fx:id="coordinates" layoutX="14.0" layoutY="187.0" text="Coordinates" />
       <fx:include fx:id="enterPerson" layoutX="250.0" layoutY="12.0" source="EnterPerson.fxml" />
    </children>
 </AnchorPane>

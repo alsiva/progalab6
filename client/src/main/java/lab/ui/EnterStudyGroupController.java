@@ -1,14 +1,15 @@
 package lab.ui;
-
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import lab.domain.*;
-
 import java.util.Date;
+import java.util.ResourceBundle;
 
-public class EnterStudyGroupController extends AbstractCommandController {
+public class EnterStudyGroupController extends AbstractCommandController implements LocalizedController {
 
     //todo catch Exceptions with incorrect user data
     @FXML
@@ -17,11 +18,24 @@ public class EnterStudyGroupController extends AbstractCommandController {
     ComboBox<FormOfEducation> formOfEducation;
     @FXML
     ComboBox<Semester> semester;
+    @FXML
+    Label generalInfoLabel, coordinates;
 
     @FXML
     private Node enterPerson;
     @FXML
     private EnterPersonController enterPersonController;
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        name.setPromptText(bundle.getString("EnterGroupPage.name"));
+        studentsCount.setPromptText(bundle.getString("EnterGroupPage.studentsCount"));
+        formOfEducation.setPromptText(bundle.getString("EnterGroupPage.formOfEducation"));
+        semester.setPromptText(bundle.getString("EnterGroupPage.semester"));
+        generalInfoLabel.setText(bundle.getString("generalInfoLabel"));
+        coordinates.setText(bundle.getString("coordinatesLabel"));
+        enterPersonController.updateLanguage(bundle);
+    }
 
     @FXML
     public void initialize() {

@@ -3,6 +3,7 @@ package lab;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lab.auth.AuthorizationManager;
+import lab.languages.UiLanguage;
 import lab.ui.Pages;
 
 import java.io.IOException;

@@ -1,13 +1,24 @@
 package lab.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import lab.domain.FailedToParseException;
 import lab.domain.Location;
 
-public class EnterLocationController {
+import java.util.ResourceBundle;
+
+public class EnterLocationController implements LocalizedController {
     @FXML
     TextField name, x, y;
+    @FXML
+    Label locationLabel;
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+        name.setPromptText(bundle.getString("EnterLocationController.name"));
+        locationLabel.setText(bundle.getString("EnterLocationController.locationLabel"));
+    }
 
     public Location getLocation() throws FailedToParseException {
         Integer locationX = Location.readX(x.getText().trim());

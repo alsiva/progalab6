@@ -9,6 +9,7 @@ import javafx.stage.Window;
 import lab.ConnectionManagerClient;
 import lab.auth.Credentials;
 import lab.domain.StudyGroup;
+import lab.languages.UiLanguage;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,14 +17,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Pages {
-
-    private static <T> void openPage(Stage primaryStage, String pageResourcePath, Consumer<? super T> setup) throws IOException {
+    private static <T extends LocalizedController> void openPage(Stage primaryStage, String pageResourcePath, Consumer<T> setup) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Pages.class.getResource(pageResourcePath));
         Parent root = fxmlLoader.load();
 
-        setup.accept(fxmlLoader.<T>getController());
-
+        T controller = fxmlLoader.getController();
+        setup.accept(controller);
         primaryStage.setScene(new Scene(root));
+        controller.updateLanguage(UiLanguage.getLanguageBundle());
         primaryStage.show();
     }
 
@@ -66,13 +67,12 @@ public class Pages {
             controller.setOwner(owner);
             controller.setConnectionManager(connectionManager);
             controller.setCredentials(credentials);
-
             controller.setStudyGroup(studyGroup);
             controller.setOnSuccess(onSuccess);
         } );
     }
 
-    private static <T> void openModal(Window owner, String pageResourcePath, String title, BiConsumer<? super Stage, ? super T> setup) throws IOException {
+    private static <T extends LocalizedController> void openModal(Window owner, String pageResourcePath, String title, BiConsumer<? super Stage, T> setup) throws IOException {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Pages.class.getResource(pageResourcePath));
         Parent root = fxmlLoader.load();
@@ -82,7 +82,10 @@ public class Pages {
 
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(owner);
-        setup.accept(stage, fxmlLoader.<T>getController());
+        T controller = fxmlLoader.getController();
+        setup.accept(stage, controller);
+
+        controller.updateLanguage(UiLanguage.getLanguageBundle());
         stage.show();
     }
 

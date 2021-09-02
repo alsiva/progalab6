@@ -1,6 +1,5 @@
 package lab.ui;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,14 +11,13 @@ import lab.commands.ShowCommand;
 import lab.domain.StudyGroup;
 import lab.response.Response;
 import lab.response.ShowResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.ResourceBundle;
 
-public class VisualizeController extends AbstractCommandController {
+public class VisualizeController extends AbstractCommandController implements LocalizedController {
 
     protected Stage primaryStage;
 
@@ -29,6 +27,11 @@ public class VisualizeController extends AbstractCommandController {
 
     @FXML
     Canvas canvas;
+
+    @Override
+    public void updateLanguage(ResourceBundle bundle) {
+
+    }
 
     public void getDataForVisualisation() {
         Response response;
