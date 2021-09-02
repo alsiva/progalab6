@@ -10,10 +10,10 @@
             <content>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0">
                     <children>
-                        <Button fx:id="clear" mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="56.0" text="Clear" />
-                        <Button fx:id="info" mnemonicParsing="false" onAction="#info" prefHeight="25.0" prefWidth="54.0" text="Info" />
-                        <Button fx:id="show" mnemonicParsing="false" onAction="#show" prefHeight="25.0" prefWidth="56.0" text="Show" />
-                        <Button fx:id="visualize" mnemonicParsing="false" onAction="#visualize" text="Visualize" />
+                        <Button fx:id="clear" mnemonicParsing="false" onAction="#clear" prefHeight="25.0" prefWidth="115.0" text="Clear" />
+                        <Button fx:id="info" mnemonicParsing="false" onAction="#info" prefHeight="25.0" prefWidth="122.0" text="Info" />
+                        <Button fx:id="show" mnemonicParsing="false" onAction="#show" prefHeight="25.0" prefWidth="112.0" text="Show" />
+                        <Button fx:id="visualize" mnemonicParsing="false" onAction="#visualize" prefHeight="25.0" prefWidth="110.0" text="Visualize" />
                     </children>
                     <padding>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -99,7 +99,7 @@
             <content>
                 <HBox spacing="8.0">
                     <children>
-                        <fx:include fx:id="changeLanguage" source="ChangeLanguage.fxml"/>
+                        <fx:include fx:id="changeLanguage" source="ChangeLanguage.fxml" />
                         <Button fx:id="logOutButton" alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out">
                      <HBox.margin>
                         <Insets left="24.0" />
