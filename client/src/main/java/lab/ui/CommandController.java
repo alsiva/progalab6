@@ -5,7 +5,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lab.commands.*;
 import lab.domain.*;
-import lab.languages.UiLanguage;
 import lab.response.*;
 import java.io.IOException;
 import java.util.*;
@@ -17,8 +16,7 @@ public class CommandController extends AbstractCommandController implements Loca
         filterLessThenSemesterChoiceBox.getItems().setAll(Semester.values());
         filterLessThenSemesterChoiceBox.setValue(Semester.SECOND);
 
-        languageComboBox.getItems().setAll(UiLanguage.values());
-        languageComboBox.setValue(UiLanguage.getInterfaceLanguage());
+        changeLanguageController.setChangeLanguageCallback(this::updateLanguage);
     }
 
     protected Stage primaryStage;
@@ -121,7 +119,7 @@ public class CommandController extends AbstractCommandController implements Loca
     TextField removeAllByStudentsCountField ;
 
     @FXML
-    Button removeByIdButton, remove2, logOutButton, countButton, changeLanguage;
+    Button removeByIdButton, remove2, logOutButton, countButton;
 
     @FXML
     Label showGroupsHavingLessSem;
@@ -165,18 +163,16 @@ public class CommandController extends AbstractCommandController implements Loca
         filterLessThenSemesterChoiceBox.setAccessibleText(bundle.getString("filterLessThenSemesterChoiceBox"));
         filterShowGroupsHavingLessSem.setText(bundle.getString("filterShowGroupsHavingLessSem"));
 
-        languageComboBox.setPromptText(bundle.getString("languageComboBox"));
         logOutButton.setText(bundle.getString("logOutButton"));
         countButton.setText(bundle.getString("countButton"));
-        changeLanguage.setText(bundle.getString("changeLanguageButton"));
+
+        changeLanguageController.updateLanguage(bundle);
     }
 
     @FXML
-    ComboBox<UiLanguage> languageComboBox;
-    public void changeLanguage() {
-        UiLanguage.setLanguage(languageComboBox.getValue());
-        updateLanguage(UiLanguage.getLanguageBundle());
-    }
+    public Node changeLanguage;
+    @FXML
+    public ChangeLanguageController changeLanguageController;
 
     @FXML
     TextField removeByIdIdField;

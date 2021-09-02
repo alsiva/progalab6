@@ -99,8 +99,7 @@
             <content>
                 <HBox spacing="8.0">
                     <children>
-                        <ComboBox fx:id="languageComboBox" prefWidth="150.0" promptText="Language" />
-                        <Button fx:id="changeLanguage" mnemonicParsing="false" onAction="#changeLanguage" prefHeight="25.0" prefWidth="132.0" text="Change Language" />
+                        <fx:include fx:id="changeLanguage" source="ChangeLanguage.fxml"/>
                         <Button fx:id="logOutButton" alignment="CENTER" mnemonicParsing="false" onAction="#logOut" prefHeight="10.0" prefWidth="77.0" text="Log out">
                      <HBox.margin>
                         <Insets left="24.0" />
