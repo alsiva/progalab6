@@ -1,6 +1,7 @@
 package lab.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -28,6 +29,17 @@ public class LoginController implements LocalizedController {
 
     public void setConnectionManager(ConnectionManagerClient connectionManager) {
         this.connectionManager = connectionManager;
+    }
+
+    @FXML
+    Node changeLanguage;
+
+    @FXML
+    ChangeLanguageController changeLanguageController;
+
+    @FXML
+    void initialize() {
+        changeLanguageController.setChangeLanguageCallback(this::updateLanguage);
     }
 
 
@@ -101,5 +113,7 @@ public class LoginController implements LocalizedController {
         loginButton.setText(bundle.getString("LoginPage.login"));
         registerButton.setText(bundle.getString("LoginPage.register"));
         enterLabel.setText(bundle.getString("LoginPage.enterPanel"));
+
+        changeLanguageController.updateLanguage(bundle);
     }
 }

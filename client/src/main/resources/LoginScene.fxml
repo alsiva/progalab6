@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="344.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.LoginController">
-    <Label fx:id="enterLabel" layoutX="155.0" layoutY="35.0" text="Enter panel">
-        <font>
-            <Font size="40.0" />
-        </font>
-    </Label>
-   <VBox layoutX="160.0" layoutY="123.0" prefHeight="200.0" prefWidth="300.0">
-      <children>
-         <TextField fx:id="usernameField" promptText="username" onKeyPressed="#clearError" />
-         <PasswordField fx:id="passwordField" promptText="password" onKeyPressed="#clearError" />
-         <Label fx:id="errorLabel" prefHeight="34.0" prefWidth="307.0" textFill="#a12e2e" />
-         <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="25.0" prefWidth="300.0">
-            <children>
-                <Button fx:id="loginButton" mnemonicParsing="false" onAction="#logIn" prefHeight="25.0" prefWidth="150.0" text="Log in" HBox.hgrow="ALWAYS" />
-                <Button fx:id="registerButton" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="150.0" text="Register" HBox.hgrow="ALWAYS" />
-            </children>
-         </HBox>
-      </children>
-   </VBox>
-</AnchorPane>
+<VBox prefHeight="344.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab.ui.LoginController">
+        <children>
+            <Label fx:id="enterLabel" alignment="TOP_CENTER" contentDisplay="TOP" prefHeight="76.0" prefWidth="472.0" text="Enter panel">
+                <font>
+                    <Font size="40.0" />
+                </font>
+            </Label>
+           <TextField fx:id="usernameField" onKeyPressed="#clearError" promptText="username" />
+           <PasswordField fx:id="passwordField" onKeyPressed="#clearError" promptText="password" />
+           <Label fx:id="errorLabel" prefHeight="34.0" prefWidth="307.0" textFill="#a12e2e" />
+           <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="471.0">
+              <children>
+                  <Button fx:id="loginButton" mnemonicParsing="false" onAction="#logIn" prefHeight="25.0" prefWidth="150.0" text="Log in" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="registerButton" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="150.0" text="Register" HBox.hgrow="ALWAYS" />
+              </children>
+         <padding>
+            <Insets bottom="32.0" />
+         </padding>
+           </HBox>
+            <fx:include fx:id="changeLanguage" alignment="CENTER" prefWidth="300.0" source="ChangeLanguage.fxml" />
+        </children>
+   <padding>
+      <Insets bottom="24.0" left="64.0" right="64.0" top="36.0" />
+   </padding>
+     </VBox>
