@@ -2,9 +2,6 @@ package lab.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -13,7 +10,6 @@ import lab.domain.FailedToParseException;
 import lab.domain.StudyGroup;
 import lab.response.Response;
 import lab.response.UpdateIdResponse;
-
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -30,6 +26,7 @@ public class EditGroupController extends AbstractCommandController implements Lo
     public void setOwner(Window owner) { this.owner = owner; }
 
     private Long id;
+    private String creator;
     private Consumer<StudyGroup> onSuccess;
 
     @FXML
@@ -44,6 +41,7 @@ public class EditGroupController extends AbstractCommandController implements Lo
 
     public void setStudyGroup(StudyGroup studyGroup) {
         id = studyGroup.getId();
+        creator = studyGroup.getCreator();
         enterStudyGroupController.setGroup(studyGroup);
     }
 
@@ -56,6 +54,7 @@ public class EditGroupController extends AbstractCommandController implements Lo
             return;
         }
         group.setId(id);
+        group.setCreator(creator);
         Response response = getResponse(new UpdateIdCommand(group));
 
         if (!(response instanceof UpdateIdResponse)) {

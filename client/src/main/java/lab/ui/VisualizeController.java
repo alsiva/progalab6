@@ -1,23 +1,34 @@
 package lab.ui;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lab.commands.ShowCommand;
 import lab.domain.StudyGroup;
 import lab.response.Response;
 import lab.response.ShowResponse;
+
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public class VisualizeController extends AbstractCommandController implements LocalizedController {
+public class VisualizeController extends AbstractCommandController implements LocalizedController{
 
     protected Stage primaryStage;
 
@@ -27,6 +38,44 @@ public class VisualizeController extends AbstractCommandController implements Lo
 
     @FXML
     Canvas canvas;
+
+    @FXML
+    ImageView polyakov;
+
+    @FXML
+    public void initialize() throws MalformedURLException {
+        //translate
+        TranslateTransition translate = new TranslateTransition();
+        translate.setNode(polyakov);
+        translate.setDuration(Duration.millis(2000));
+        translate.setCycleCount(4);
+        translate.setByX(300);
+        translate.setByY(-200);
+        translate.setAutoReverse(true);
+        translate.play();
+
+        //rotate
+        RotateTransition rotate = new RotateTransition();
+        rotate.setNode(polyakov);
+        rotate.setDuration(Duration.millis(2000));
+        rotate.setCycleCount(4);
+        rotate.setInterpolator(Interpolator.LINEAR);
+        rotate.setByAngle(360);
+        rotate.play();
+
+        //fade
+        FadeTransition fade = new FadeTransition();
+        fade.setNode(polyakov);
+        fade.setDuration(Duration.millis(10000));
+        fade.setCycleCount(1);
+        fade.setInterpolator(Interpolator.LINEAR);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        fade.play();
+
+    }
+
+
 
     @Override
     public void updateLanguage(ResourceBundle bundle) {
