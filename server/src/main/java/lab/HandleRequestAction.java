@@ -4,6 +4,7 @@ import lab.commands.Request;
 import lab.response.Response;
 
 import java.io.IOException;
+import java.net.SocketAddress;
 import java.util.concurrent.RecursiveAction;
 
 public class HandleRequestAction extends RecursiveAction {
@@ -23,7 +24,7 @@ public class HandleRequestAction extends RecursiveAction {
 
         Response response;
         try {
-            response = responseHandler.getResponse(request.command, request.credentials);
+            response = responseHandler.getResponse(request.command, request.credentials, requestFromClient.getSenderAddress());
         } catch (ResponseHandler.CommandNotRecognizedException e) {
             System.err.println("Command not recognized: " + e.getNotRecognizedCommand());
             return;

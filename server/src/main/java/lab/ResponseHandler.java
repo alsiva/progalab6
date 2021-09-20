@@ -7,6 +7,7 @@ import lab.commands.*;
 import lab.domain.StudyGroup;
 import lab.response.*;
 
+import java.net.SocketAddress;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class ResponseHandler {
         this.authorizationManager = authorizationManager;
     }
 
-    public Response getResponse(Command command, Credentials credentials) throws CommandNotRecognizedException {
+    public Response getResponse(Command command, Credentials credentials, SocketAddress senderAddress) throws CommandNotRecognizedException {
         if (command instanceof RegisterCommand) {
             boolean isSuccessful = authorizationManager.createNewUser(credentials);
             return new RegistrationResultResponse(isSuccessful, credentials);
@@ -30,11 +31,23 @@ public class ResponseHandler {
 
         boolean isAuthorized = authorizationManager.checkCredentials(credentials);
         if (command instanceof CheckCredentialsCommand) {
+            if (isAuthorized) {
+                authorizationManager.addUserToMap(credentials.username, senderAddress);
+            }
             return new CheckCredentialsResponse(isAuthorized, credentials);
         }
 
         if (!isAuthorized) {
             return new AuthorizationFailedResponse(command, credentials);
+        }
+/*
+        if (command instanceof UpdateGroupsToOtherClientsCommand) {
+
+        }
+*/
+        if (command instanceof LogoutCommand) {
+            authorizationManager.removeUserFromMap(credentials.username);
+            return new LogoutResponse();
         }
 
         if (command instanceof InfoCommand) {

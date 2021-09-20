@@ -8,7 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import lab.ConnectionManagerClient;
+import lab.Constants;
 import lab.domain.*;
+import lab.response.Response;
+import lab.response.StudyGroupModifiedResponse;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -151,6 +156,33 @@ public class StudyGroupController extends AbstractCommandController implements L
         initializeColumns();
         initializeFilters();
         studyGroupTable.setItems(filteredList);
+        Thread thread = new Thread(() -> {
+            try {
+                ConnectionManagerClient connectionManager = new ConnectionManagerClient(Constants.UPDATE_PORT);
+            } catch (IOException e) {
+                System.err.println("Failed to create connection manager");
+            }
+
+
+            while (true) {
+                Response response;
+                try {
+                    response = connectionManager.receiveResponse();
+                } catch (IOException e) {
+                    System.err.println("Failed to get response");
+                    continue;
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
+                if (response instanceof StudyGroupModifiedResponse) {
+                    //найти индекс и сделать list set
+                }
+            }
+        });
+
+
     }
 
     @SuppressWarnings("unchecked")

@@ -3,16 +3,29 @@ package lab.auth;
 import lab.DatabaseManager;
 
 import java.math.BigInteger;
+import java.net.SocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AuthorizationControlManager {
 
     private final DatabaseManager databaseManager;
 
+    Map<String, SocketAddress> users = new HashMap<String, SocketAddress>();
+
     public AuthorizationControlManager(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
+    }
+
+    public void addUserToMap(String username, SocketAddress socketAddress) {
+        users.put(username, socketAddress);
+    }
+
+    public void removeUserFromMap(String username) {
+        users.remove(username);
     }
 
     public boolean checkCredentials(Credentials credentials) {
