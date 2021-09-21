@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 public class ResponseHandler {
     private final Administration administration;
     private final AuthorizationControlManager authorizationManager;
+    private final Notifier notifier;
 
-    public ResponseHandler(Administration administration, AuthorizationControlManager authorizationManager) {
+    public ResponseHandler(Administration administration, AuthorizationControlManager authorizationManager, Notifier notifier) {
         this.administration = administration;
         this.authorizationManager = authorizationManager;
+        this.notifier = notifier;
     }
 
     public Response getResponse(Command command, Credentials credentials, SocketAddress senderAddress) throws CommandNotRecognizedException {
@@ -31,22 +33,14 @@ public class ResponseHandler {
 
         boolean isAuthorized = authorizationManager.checkCredentials(credentials);
         if (command instanceof CheckCredentialsCommand) {
-            if (isAuthorized) {
-                authorizationManager.addUserToMap(credentials.username, senderAddress);
-            }
             return new CheckCredentialsResponse(isAuthorized, credentials);
         }
 
         if (!isAuthorized) {
             return new AuthorizationFailedResponse(command, credentials);
         }
-/*
-        if (command instanceof UpdateGroupsToOtherClientsCommand) {
 
-        }
-*/
         if (command instanceof LogoutCommand) {
-            authorizationManager.removeUserFromMap(credentials.username);
             return new LogoutResponse();
         }
 
@@ -69,6 +63,9 @@ public class ResponseHandler {
             StudyGroup group = ((UpdateIdCommand) command).getGroup();
             try {
                 boolean wasUpdated = administration.updateId(group, credentials.username);
+                if (wasUpdated) {
+                    notifier.notifyAboutGroupChange(group, senderAddress);
+                }
                 return new UpdateIdResponse(wasUpdated);
             } catch (NotAuthorizedException e) {
                 return new CantModifyResponse(group.getId());

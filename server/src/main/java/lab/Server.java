@@ -33,8 +33,15 @@ public class Server {
         }
 
         AuthorizationControlManager authorizationManager = new AuthorizationControlManager(databaseManager);
+        Notifier notifier;
+        try {
+            notifier = new Notifier();
+        } catch (IOException e) {
+            System.err.println("Failed to create Notifier");
+            return;
+        }
 
-        ResponseHandler responseHandler = new ResponseHandler(administration, authorizationManager);
+        ResponseHandler responseHandler = new ResponseHandler(administration, authorizationManager, notifier);
 
         DatagramChannel channel;
         try {

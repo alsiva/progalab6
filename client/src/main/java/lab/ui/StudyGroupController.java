@@ -10,9 +10,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import lab.ConnectionManagerClient;
 import lab.Constants;
+import lab.commands.Request;
+import lab.commands.SubscribeForUpdatesCommand;
 import lab.domain.*;
+import lab.response.GroupChangedResponse;
 import lab.response.Response;
-import lab.response.StudyGroupModifiedResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -25,7 +27,17 @@ import java.util.function.Predicate;
 public class StudyGroupController extends AbstractCommandController implements LocalizedController {
     private Stage stage;
 
-    public void setStage(Stage stage) { this.stage = stage; }
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        stage.setOnCloseRequest((event -> {
+            checkForUpdatesThread.interrupt();
+            try (ConnectionManagerClient connectionManager = new ConnectionManagerClient(Constants.UPDATE_PORT)) {
+                connectionManager.sendRequest(new Request(new SubscribeForUpdatesCommand(false), credentials));
+            } catch (IOException e) {
+                System.err.println("Failed to unsubscribe");
+            }
+        }));
+    }
 
     @FXML
     public TableView<StudyGroup> studyGroupTable;
@@ -156,33 +168,57 @@ public class StudyGroupController extends AbstractCommandController implements L
         initializeColumns();
         initializeFilters();
         studyGroupTable.setItems(filteredList);
-        Thread thread = new Thread(() -> {
-            try {
-                ConnectionManagerClient connectionManager = new ConnectionManagerClient(Constants.UPDATE_PORT);
+        listenToGroupUpdates();
+    }
+
+    private Thread checkForUpdatesThread;
+
+
+    private void listenToGroupUpdates() {
+        checkForUpdatesThread = new Thread(() -> {
+
+            try (ConnectionManagerClient updateConnectionManager = new ConnectionManagerClient(Constants.UPDATE_PORT)) {
+                try {
+                    updateConnectionManager.sendRequest(new Request(new SubscribeForUpdatesCommand(true), credentials));
+                } catch (IOException e) {
+                    System.err.println("Failed to send request");
+                    return;
+                }
+
+                while (true) {
+                    Response response;
+                    try {
+                        response = updateConnectionManager.receiveResponse();
+                    } catch (IOException e) {
+                        break; //modal is closed
+                    } catch (ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                        break;
+                    }
+
+                    if (response instanceof GroupChangedResponse) {
+                        GroupChangedResponse groupChangedResponse = (GroupChangedResponse) response;
+                        StudyGroup updatedGroup = groupChangedResponse.getStudyGroup();
+                        int i = -1;
+                        for (StudyGroup studyGroup : list) {
+                            i++;
+                            if (updatedGroup.getId().equals(studyGroup.getId())) {
+                                break;
+                            }
+                        }
+
+                        if (i >= 0) {
+                            list.set(i, updatedGroup);
+                            System.out.println("Group updated");
+                        }
+
+                    }
+                }
             } catch (IOException e) {
                 System.err.println("Failed to create connection manager");
             }
-
-
-            while (true) {
-                Response response;
-                try {
-                    response = connectionManager.receiveResponse();
-                } catch (IOException e) {
-                    System.err.println("Failed to get response");
-                    continue;
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                if (response instanceof StudyGroupModifiedResponse) {
-                    //найти индекс и сделать list set
-                }
-            }
         });
-
-
+        checkForUpdatesThread.start();
     }
 
     @SuppressWarnings("unchecked")
@@ -242,7 +278,7 @@ public class StudyGroupController extends AbstractCommandController implements L
         TableColumn<StudyGroup, String> creatorCol = new TableColumn<>("creator");
         creatorCol.setCellValueFactory(new PropertyValueFactory<>("creator"));
 
-        studyGroupTable.getColumns().addAll(idCol ,nameCol, coordinatesCol, creationDateCol, studentsCountCol, formOfEducationCol, semesterCol, groupAdminCol, creatorCol);
+        studyGroupTable.getColumns().addAll(idCol, nameCol, coordinatesCol, creationDateCol, studentsCountCol, formOfEducationCol, semesterCol, groupAdminCol, creatorCol);
         studyGroupTable.setOnMousePressed(event -> {
             if (!event.isPrimaryButtonDown() || event.getClickCount() != 2) {
                 return;
@@ -264,4 +300,5 @@ public class StudyGroupController extends AbstractCommandController implements L
     public void initData(List<StudyGroup> items) {
         list.setAll(items);
     }
+
 }

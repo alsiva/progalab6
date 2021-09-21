@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
-public class ConnectionManagerClient {
+public class ConnectionManagerClient implements AutoCloseable {
     private final DatagramChannel channel;
 
     public ConnectionManagerClient(int port) throws IOException {
@@ -36,5 +36,8 @@ public class ConnectionManagerClient {
         }
     }
 
-
+    @Override
+    public void close() throws IOException {
+        channel.close();
+    }
 }

@@ -3,6 +3,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import lab.ConnectionManagerClient;
+import lab.Constants;
 import lab.commands.*;
 import lab.domain.*;
 import lab.response.*;
@@ -15,7 +17,6 @@ public class CommandController extends AbstractCommandController implements Loca
     public void initialize() {
         filterLessThenSemesterChoiceBox.getItems().setAll(Semester.values());
         filterLessThenSemesterChoiceBox.setValue(Semester.SECOND);
-
         changeLanguageController.setChangeLanguageCallback(this::updateLanguage);
     }
 
