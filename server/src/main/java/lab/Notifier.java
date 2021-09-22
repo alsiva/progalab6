@@ -1,10 +1,11 @@
 package lab;
 
-import lab.auth.AuthorizationControlManager;
 import lab.commands.Request;
 import lab.commands.SubscribeForUpdatesCommand;
 import lab.domain.StudyGroup;
+import lab.response.GroupAddedResponse;
 import lab.response.GroupChangedResponse;
+import lab.response.GroupRemovedResponse;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -68,6 +69,30 @@ public class Notifier {
                     connectionManager.sendResponse(new GroupChangedResponse(studyGroup), subscriberAddress);
                 } catch (IOException e) {
                     System.err.println("Failed to send GroupChangedResponse");
+                }
+            }
+        }
+    }
+
+    public void notifyAboutAddingGroup(StudyGroup studyGroup, SocketAddress senderAddress) {
+        for (SocketAddress subscriberAddress : subscribers) {
+            if (!(senderAddress.equals(subscriberAddress))) {
+                try {
+                    connectionManager.sendResponse(new GroupAddedResponse(studyGroup), subscriberAddress);
+                } catch (IOException e) {
+                    System.err.println("Failed to send GroupAddedResponse");
+                }
+            }
+        }
+    }
+
+    public void notifyAboutRemovingGroup(Set<Long> removedIds, SocketAddress senderAddress) {
+        for (SocketAddress subscriberAddress: subscribers) {
+            if (!(senderAddress.equals(subscriberAddress))) {
+                try {
+                    connectionManager.sendResponse(new GroupRemovedResponse(removedIds), subscriberAddress);
+                } catch (IOException e) {
+                    System.err.println("Failed to send GroupRemovedResponse");
                 }
             }
         }

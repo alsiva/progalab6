@@ -9,24 +9,22 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lab.ConnectionManagerClient;
+import lab.Constants;
+import lab.commands.Request;
 import lab.commands.ShowCommand;
+import lab.commands.SubscribeForUpdatesCommand;
 import lab.domain.StudyGroup;
-import lab.response.Response;
-import lab.response.ShowResponse;
+import lab.response.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.ResourceBundle;
+
+import java.util.*;
 
 public class VisualizeController extends AbstractCommandController implements LocalizedController{
 
@@ -43,7 +41,9 @@ public class VisualizeController extends AbstractCommandController implements Lo
     ImageView polyakov;
 
     @FXML
-    public void initialize() throws MalformedURLException {
+    public void initialize() {
+        listenToGroupUpdates();
+
         //translate
         TranslateTransition translate = new TranslateTransition();
         translate.setNode(polyakov);
@@ -72,7 +72,6 @@ public class VisualizeController extends AbstractCommandController implements Lo
         fade.setFromValue(1);
         fade.setToValue(0);
         fade.play();
-
     }
 
 
@@ -83,6 +82,7 @@ public class VisualizeController extends AbstractCommandController implements Lo
     }
 
     public void getDataForVisualisation() {
+
         Response response;
         try {
             response = getResponse(new ShowCommand());
@@ -98,6 +98,7 @@ public class VisualizeController extends AbstractCommandController implements Lo
         List<Square> squares = new ArrayList<>();
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         int rectSize = 30;
 
@@ -106,7 +107,7 @@ public class VisualizeController extends AbstractCommandController implements Lo
             int x = generator.nextInt((int) canvas.getWidth() - rectSize);
             int y = generator.nextInt((int) canvas.getHeight() - rectSize);
 
-            int count = group.getStudentsCount();
+
 
             Rectangle rectangle = new Rectangle();
 
@@ -124,6 +125,7 @@ public class VisualizeController extends AbstractCommandController implements Lo
 
             gc.setFill(Color.rgb(rgb[0] + 128, rgb[1] + 128, rgb[2] + 128));
             gc.fillRect(x, y, 30, 30);
+            gc.fillText(group.getName(), x, y);
 
             squares.add(new Square(x, y, 30, 30, group));
         }
@@ -148,7 +150,48 @@ public class VisualizeController extends AbstractCommandController implements Lo
         Pages.openCommandsPage(primaryStage, connectionManager, credentials);
     }
 
+
+    private Thread checkForUpdatesThread;
+
+
+    private void listenToGroupUpdates() {
+        checkForUpdatesThread = new Thread(() -> {
+
+            try (ConnectionManagerClient updateConnectionManager = new ConnectionManagerClient(Constants.UPDATE_PORT)) {
+                try {
+                    updateConnectionManager.sendRequest(new Request(new SubscribeForUpdatesCommand(true), credentials));
+                } catch (IOException e) {
+                    System.err.println("Failed to send request");
+                    return;
+                }
+
+                while (true) {
+                    Response response;
+                    try {
+                        response = updateConnectionManager.receiveResponse();
+                    } catch (IOException e) {
+                        break; //modal is closed
+                    } catch (ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                        break;
+                    }
+
+                    if (response instanceof GroupAddedResponse || response instanceof GroupChangedResponse || response instanceof GroupRemovedResponse) {
+                        getDataForVisualisation();
+                    }
+
+
+                    }
+                } catch (IOException e) {
+                System.err.println("Failed to create connection manager");
+            }
+
+        });
+        checkForUpdatesThread.start();
+    }
 }
+
+
 
 class Square {
     double x;

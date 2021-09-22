@@ -13,7 +13,9 @@ import lab.Constants;
 import lab.commands.Request;
 import lab.commands.SubscribeForUpdatesCommand;
 import lab.domain.*;
+import lab.response.GroupAddedResponse;
 import lab.response.GroupChangedResponse;
+import lab.response.GroupRemovedResponse;
 import lab.response.Response;
 
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class StudyGroupController extends AbstractCommandController implements LocalizedController {
@@ -212,6 +215,22 @@ public class StudyGroupController extends AbstractCommandController implements L
                             System.out.println("Group updated");
                         }
 
+                    }
+
+                    if (response instanceof GroupAddedResponse) {
+                        GroupAddedResponse groupAddedResponse = (GroupAddedResponse) response;
+                        StudyGroup addedGroup = groupAddedResponse.getStudyGroup();
+                        list.add(addedGroup);
+                    }
+
+                    if (response instanceof GroupRemovedResponse) {
+                        GroupRemovedResponse groupRemovedResponse = (GroupRemovedResponse) response;
+                        Set<Long> removedGroups = groupRemovedResponse.getRemovedGroups();
+                        for (int i = list.size()-1; i >= 0; i--) {
+                            if (removedGroups.contains(list.get(i).getId())) {
+                                list.remove(i);
+                            }
+                        }
                     }
                 }
             } catch (IOException e) {

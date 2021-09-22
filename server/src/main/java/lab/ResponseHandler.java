@@ -8,10 +8,7 @@ import lab.domain.StudyGroup;
 import lab.response.*;
 
 import java.net.SocketAddress;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ResponseHandler {
@@ -56,6 +53,9 @@ public class ResponseHandler {
         }
         if (command instanceof AddCommand) {
             Optional<Long> optionalId = administration.add(((AddCommand) command).getGroup(), credentials.username);
+            if (optionalId.isPresent()) {
+                notifier.notifyAboutAddingGroup(((AddCommand) command).getGroup(), senderAddress);
+            }
             return new AddResponse(optionalId.orElse(null));
 
         }
@@ -76,6 +76,11 @@ public class ResponseHandler {
             long id = ((RemoveByIdCommand) command).getId();
             try {
                 boolean wasRemoved = administration.removeById(id, credentials.username);
+                if (wasRemoved) {
+                    Set<Long> ids = new HashSet<>();
+                    ids.add(id);
+                    notifier.notifyAboutRemovingGroup(ids, senderAddress);
+                }
                 return new RemoveByIdResponse(wasRemoved);
             } catch (NotAuthorizedException e) {
                 return new CantModifyResponse(id);
@@ -83,25 +88,37 @@ public class ResponseHandler {
 
         }
         if (command instanceof ClearCommand) {
+            Set<StudyGroup> removedGroups = administration.getGroups();
+            Set<Long> removedIds = removedGroups.stream().map(StudyGroup::getId).collect(Collectors.toSet());
+            notifier.notifyAboutRemovingGroup(removedIds, senderAddress);
             int elementsRemovedCount = administration.clear(credentials.username);
             return new ClearResponse(elementsRemovedCount);
 
         }
         if (command instanceof AddIfMinCommand) {
             boolean wasAdded = administration.addIfMin(((AddIfMinCommand) command).getStudyGroup(), credentials.username);
+            if (wasAdded) {
+                notifier.notifyAboutAddingGroup(((AddIfMinCommand)command).getStudyGroup(), senderAddress);
+            }
             return new AddIfMinResponse(wasAdded);
 
         }
         if (command instanceof RemoveLowerCommand) {
             Set<StudyGroup> removedGroups = administration.removeLower(((RemoveLowerCommand) command).getStudyGroup(), credentials.username);
+            Set<Long> removedIds = removedGroups.stream().map(StudyGroup::getId).collect(Collectors.toSet());
+            if (!(removedGroups.isEmpty())) {
+                notifier.notifyAboutRemovingGroup(removedIds, senderAddress);
+            }
             return new RemoveLowerResponse(sorted(removedGroups));
-
         }
         if (command instanceof RemoveAllByStudentsCountCommand) {
             long count = ((RemoveAllByStudentsCountCommand) command).getCount();
             Set<StudyGroup> removedGroups = administration.removeAllByStudentsCount(count, credentials.username);
+            Set<Long> removedIds = removedGroups.stream().map(StudyGroup::getId).collect(Collectors.toSet());
+            if (!(removedGroups.isEmpty())) {
+                notifier.notifyAboutRemovingGroup(removedIds, senderAddress);
+            }
             return new RemoveAllByStudentsCountResponse(sorted(removedGroups));
-
         }
         if (command instanceof CountByGroupAdminCommand) {
             long count = administration.countByGroupAdmin(((CountByGroupAdminCommand) command).getGroupAdmin());

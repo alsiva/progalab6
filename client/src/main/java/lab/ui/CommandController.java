@@ -3,8 +3,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import lab.ConnectionManagerClient;
-import lab.Constants;
 import lab.commands.*;
 import lab.domain.*;
 import lab.response.*;
